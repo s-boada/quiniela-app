@@ -1,0 +1,9 @@
+/* admin.css – simple styling for admin panel */
+.admin-panel {
+  font-family: 'Inter', sans-serif;
+  color: var(--text-primary);
+}
+.match-row span {
+  flex: 1;
+  min-width: 120px;
+}

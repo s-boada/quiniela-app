@@ -7,10 +7,113 @@ let state = {
   predictions: {},
   currentUser: null,
   activeTab: 'leaderboard',
-  currentPredictionFilter: 'All'
+  currentPredictionFilter: 'All',
+  activeGroupStage: 'A',
+  isAdmin: false
 };
 
 let selectedAvatarEmoji = '⚽';
+
+const COUNTRY_CODES = {
+  "Argelia": "dz",
+  "Argentina": "ar",
+  "Australia": "au",
+  "Austria": "at",
+  "Bélgica": "be",
+  "Bosnia y Herzegovina": "ba",
+  "Brasil": "br",
+  "Canadá": "ca",
+  "Cabo Verde": "cv",
+  "Colombia": "co",
+  "Croacia": "hr",
+  "Curazao": "cw",
+  "Curaçao": "cw",
+  "Chequia": "cz",
+  "RD Congo": "cd",
+  "Ecuador": "ec",
+  "Egipto": "eg",
+  "Inglaterra": "gb-eng",
+  "Francia": "fr",
+  "Alemania": "de",
+  "Ghana": "gh",
+  "Haití": "ht",
+  "Irán": "ir",
+  "Irak": "iq",
+  "Costa de Marfil": "ci",
+  "Japón": "jp",
+  "Jordania": "jo",
+  "México": "mx",
+  "Marruecos": "ma",
+  "Países Bajos": "nl",
+  "Nueva Zelanda": "nz",
+  "Noruega": "no",
+  "Panamá": "pa",
+  "Paraguay": "py",
+  "Portugal": "pt",
+  "Catar": "qa",
+  "Arabia Saudita": "sa",
+  "Escocia": "gb-sct",
+  "Senegal": "sn",
+  "Sudáfrica": "za",
+  "Corea del Sur": "kr",
+  "España": "es",
+  "Suecia": "se",
+  "Suiza": "ch",
+  "Túnez": "tn",
+  "Turquía": "tr",
+  "EE.UU.": "us",
+  "Uruguay": "uy",
+  "Uzbekistán": "uz"
+};
+
+function getCountryFlag(countryName) {
+  if (!countryName) return "";
+  const code = COUNTRY_CODES[countryName];
+  if (!code) return "";
+  return `<img src="https://flagcdn.com/w40/${code}.png" alt="Bandera de ${countryName}" class="country-flag-img" style="width: 24px; height: auto; border-radius: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.15); object-fit: contain; vertical-align: middle; display: inline-block;">`;
+}
+
+function isMatchUndetermined(match) {
+  if (!match || !match.homeTeam || !match.awayTeam) return true;
+  const placeholders = ["Ganador", "Segundo", "Perdedor", "Grupo", "3ro", "3er", "Winner", "Runner-up", "3rd", "Loser"];
+  const homePlaceholder = placeholders.some(p => match.homeTeam.includes(p));
+  const awayPlaceholder = placeholders.some(p => match.awayTeam.includes(p));
+  return homePlaceholder || awayPlaceholder;
+}
+
+function translateLabel(label) {
+  if (!label) return "";
+  return label
+    .replace(/Winner Group /g, "Ganador Grupo ")
+    .replace(/Runner-up Group /g, "Segundo Grupo ")
+    .replace(/3rd Group /g, "3ro Grupo ")
+    .replace(/Winner Match /g, "Ganador Partido ")
+    .replace(/Loser Match /g, "Perdedor Partido ");
+}
+
+// Convertir fecha de partido UTC (de la base de datos) a objeto Date
+function parseMatchDateAsUTC(dateStr) {
+  if (!dateStr) return new Date();
+  const utcStr = dateStr.replace(' ', 'T') + 'Z';
+  return new Date(utcStr);
+}
+
+// Formatear la fecha del partido (almacenada en UTC) al horario de Caracas (UTC-4) y formato 12h (AM/PM)
+function formatMatchDateToCaracas12h(dateStr) {
+  if (!dateStr) return "";
+  const utcDate = parseMatchDateAsUTC(dateStr);
+  
+  const formatter = new Intl.DateTimeFormat('es-VE', {
+    timeZone: 'America/Caracas',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  });
+  
+  return formatter.format(utcDate);
+}
 
 // ==========================================
 // CONFIGURACIÓN DE API (MUNDIAL 2026)
@@ -24,17 +127,45 @@ const API_CONFIG = {
 // INICIALIZACIÓN
 // ==========================================
 window.addEventListener('DOMContentLoaded', () => {
+  // Force light theme as default; remove any dark mode class
+  document.body.classList.remove('dark-theme');
   initLocalStorage();
   setupNavigation();
   populateCountrySelects();
-  renderApp();
+  switchTab(state.activeTab); // Mantener la pestaña activa tras recarga
   
   // Sincronizar marcadores finalizados en segundo plano al cargar
   syncLiveResults();
   
-  // Sincronizar automáticamente cada 30 minutos
-  setInterval(syncLiveResults, 30 * 60 * 1000);
+  // Sincronizar automáticamente cada 1 minuto (para actualización inmediata al finalizar)
+  setInterval(syncLiveResults, 1 * 60 * 1000);
 });
+
+// Inicializar tema al cargar
+function initTheme() {
+  const savedTheme = localStorage.getItem('quiniela_theme');
+  const body = document.body;
+  const icon = document.getElementById('themeToggleIcon');
+  if (savedTheme === 'dark') {
+    body.classList.add('dark-theme');
+    if (icon) icon.textContent = '☀️';
+  } else {
+    body.classList.remove('dark-theme');
+    if (icon) icon.textContent = '🌙';
+  }
+}
+
+// Alternar entre modo oscuro y claro
+window.toggleTheme = () => {
+  const body = document.body;
+  const icon = document.getElementById('themeToggleIcon');
+  body.classList.toggle('dark-theme');
+  const isDark = body.classList.contains('dark-theme');
+  localStorage.setItem('quiniela_theme', isDark ? 'dark' : 'light');
+  if (icon) {
+    icon.textContent = isDark ? '☀️' : '🌙';
+  }
+};
 
 // Función de normalización de nombres para vinculación automática
 // Remueve acentos y espacios adicionales, y convierte a minúsculas
@@ -50,7 +181,7 @@ function normalizeName(name) {
 // Inicializar almacenamiento local con semillas si no existen datos previos
 function initLocalStorage() {
   // VERSIÓN DE DATOS: Si la versión almacenada no coincide, resetear a datos frescos
-  const DATA_VERSION = 'v2026_14'; // Bump a 14 para sincronizar partidos finalizados únicamente y omitir en vivo
+  const DATA_VERSION = 'v2026_104_names'; // Bump a 104_names: Fase de grupos completa + eliminatorias y nombres de usuarios completos
   const storedVersion = localStorage.getItem('quiniela_data_version');
   
   if (storedVersion !== DATA_VERSION) {
@@ -72,6 +203,16 @@ function initLocalStorage() {
   const storedUsers = localStorage.getItem('quiniela_users');
   if (storedUsers) {
     state.users = JSON.parse(storedUsers);
+    // Actualizar nombres pre-cargados a sus versiones completas conservando PIN y avatar
+    INITIAL_USERS.forEach(initUser => {
+      const existing = state.users.find(u => u.id === initUser.id);
+      if (existing) {
+        existing.name = initUser.name;
+      } else {
+        state.users.push(initUser);
+      }
+    });
+    localStorage.setItem('quiniela_users', JSON.stringify(state.users));
   } else {
     state.users = [...INITIAL_USERS];
     localStorage.setItem('quiniela_users', JSON.stringify(state.users));
@@ -101,6 +242,18 @@ function initLocalStorage() {
     state.currentUser = null;
     localStorage.removeItem('quiniela_current_user');
   }
+
+  // Cargar estado admin
+  const storedAdmin = localStorage.getItem('quiniela_is_admin');
+  state.isAdmin = storedAdmin === 'true';
+
+  // Cargar Pestaña Activa
+  const storedActiveTab = localStorage.getItem('quiniela_active_tab');
+  if (storedActiveTab) {
+    state.activeTab = storedActiveTab;
+  } else {
+    state.activeTab = 'leaderboard';
+  }
 }
 
 // Guardar estado en LocalStorage
@@ -109,6 +262,7 @@ function saveStateToStorage() {
   localStorage.setItem('quiniela_predictions', JSON.stringify(state.predictions));
   localStorage.setItem('quiniela_users', JSON.stringify(state.users));
   localStorage.setItem('quiniela_current_user', JSON.stringify(state.currentUser));
+  localStorage.setItem('quiniela_is_admin', state.isAdmin ? 'true' : 'false');
 }
 
 // ==========================================
@@ -120,14 +274,14 @@ const TEAM_TRANSLATIONS = {
   "Mexico": "México", "South Africa": "Sudáfrica", "South Korea": "Corea del Sur", "Czech Republic": "Chequia",
   "Canada": "Canadá", "Bosnia and Herzegovina": "Bosnia y Herzegovina", "USA": "EE.UU.", "United States": "EE.UU.",
   "Paraguay": "Paraguay", "Qatar": "Catar", "Switzerland": "Suiza", "Brazil": "Brasil", "Morocco": "Marruecos",
-  "Haiti": "Haití", "Scotland": "Escocia", "Australia": "Australia", "Turkey": "Turquía", "Germany": "Alemania",
-  "Curacao": "Curazao", "Netherlands": "Países Bajos", "Japan": "Japón", "Ivory Coast": "Costa de Marfil",
+  "Haiti": "Haití", "Scotland": "Escocia", "Australia": "Australia", "Turkey": "Turquía", "Türkiye": "Turquía", "Germany": "Alemania",
+  "Curacao": "Curazao", "Curaçao": "Curazao", "Netherlands": "Países Bajos", "Japan": "Japón", "Ivory Coast": "Costa de Marfil",
   "Ecuador": "Ecuador", "Sweden": "Suecia", "Tunisia": "Túnez", "Spain": "España", "Cape Verde": "Cabo Verde",
   "Belgium": "Bélgica", "Egypt": "Egipto", "Saudi Arabia": "Arabia Saudita", "Uruguay": "Uruguay", "Iran": "Irán",
   "New Zealand": "Nueva Zelanda", "France": "Francia", "Senegal": "Senegal", "Iraq": "Irak", "Norway": "Noruega",
   "Argentina": "Argentina", "Algeria": "Argelia", "Austria": "Austria", "Jordan": "Jordania", "Portugal": "Portugal",
-  "DR Congo": "RD Congo", "England": "Inglaterra", "Croatia": "Croacia", "Ghana": "Ghana", "Panama": "Panamá",
-  "Bolivia": "Bolivia", "South Africa": "Suráfrica"
+  "DR Congo": "RD Congo", "Democratic Republic of the Congo": "RD Congo", "England": "Inglaterra", "Croatia": "Croacia",
+  "Ghana": "Ghana", "Panama": "Panamá", "Bolivia": "Bolivia", "Colombia": "Colombia", "Uzbekistan": "Uzbekistán"
 };
 
 function translateTeam(engName) {
@@ -140,119 +294,175 @@ async function syncLiveResults() {
   if (syncBtn) syncBtn.textContent = 'Actualizando marcadores...';
 
   let changesMade = false;
+  let internetSuccess = false;
 
-  try {
-    // 1. Intentar obtener datos REALES de la API en vivo de la copa del mundo a través de un proxy CORS estable
-    const response = await fetch("https://api.allorigins.win/raw?url=https://worldcup26.ir/get/games");
-    if (!response.ok) throw new Error("API response error");
-    const data = await response.json();
-    
-    const games = data.games || data;
-    if (games && Array.isArray(games)) {
-      games.forEach(realMatch => {
-        const homeName = translateTeam(realMatch.home_team_name_en);
-        const awayName = translateTeam(realMatch.away_team_name_en);
-        
-        const localMatch = state.matches.find(m => 
-          m.homeTeam.toLowerCase().includes(homeName.toLowerCase()) && 
-          m.awayTeam.toLowerCase().includes(awayName.toLowerCase())
-        );
-        
-        if (localMatch) {
-          const finished = realMatch.finished === "TRUE";
+  // ═══════════════════════════════════════════════════════════════
+  // PASO 1: INTENTAR API DE INTERNET (PRIORIDAD - Datos en vivo)
+  // ═══════════════════════════════════════════════════════════════
+  const CORS_PROXIES = [
+    'https://api.allorigins.win/raw?url=',
+    'https://corsproxy.io/?',
+    'https://api.codetabs.com/v1/proxy?quest='
+  ];
+  const LIVE_API_URL = 'https://worldcup26.ir/get/games';
+
+  for (const proxy of CORS_PROXIES) {
+    if (internetSuccess) break;
+    try {
+      const internetResp = await fetch(proxy + encodeURIComponent(LIVE_API_URL), { signal: AbortSignal.timeout(8000) });
+      if (!internetResp.ok) continue;
+      const internetData = await internetResp.json();
+      const games = internetData.games || internetData;
+      
+      if (games && Array.isArray(games) && games.length > 0) {
+        games.forEach(realMatch => {
+          let homeName = "";
+          if (realMatch.home_team_name_en) {
+            homeName = translateTeam(realMatch.home_team_name_en);
+          } else if (realMatch.home_team_label) {
+            homeName = translateLabel(realMatch.home_team_label);
+          }
           
-          if (finished) {
-            const hScore = parseInt(realMatch.home_score);
-            const aScore = parseInt(realMatch.away_score);
-            if (!localMatch.completed || localMatch.realHomeScore !== hScore || localMatch.realAwayScore !== aScore || localMatch.status !== 'FINISHED') {
-              localMatch.realHomeScore = hScore;
-              localMatch.realAwayScore = aScore;
-              localMatch.completed = true;
-              localMatch.status = 'FINISHED';
-              localMatch.liveHomeScore = null;
-              localMatch.liveAwayScore = null;
-              localMatch.minute = null;
+          let awayName = "";
+          if (realMatch.away_team_name_en) {
+            awayName = translateTeam(realMatch.away_team_name_en);
+          } else if (realMatch.away_team_label) {
+            awayName = translateLabel(realMatch.away_team_label);
+          }
+          
+          let localMatch = null;
+          const apiId = parseInt(realMatch.id);
+          if (!isNaN(apiId)) {
+            localMatch = state.matches.find(m => m.apiId === apiId);
+          }
+          if (!localMatch) {
+            localMatch = state.matches.find(m => 
+              normalizeName(m.homeTeam) === normalizeName(homeName) && 
+              normalizeName(m.awayTeam) === normalizeName(awayName)
+            );
+          }
+          
+          if (localMatch) {
+            // Update team names dynamically if they changed from placeholders to actual teams
+            if (homeName && localMatch.homeTeam !== homeName) {
+              localMatch.homeTeam = homeName;
               changesMade = true;
             }
-          } else {
-            // Si el partido está en juego (IN_PLAY) o no ha empezado, mantenerlo como SCHEDULED y no mostrar marcadores en vivo
-            if (localMatch.status === 'IN_PLAY' || localMatch.completed) {
-              localMatch.status = 'SCHEDULED';
-              localMatch.liveHomeScore = null;
-              localMatch.liveAwayScore = null;
-              localMatch.minute = null;
-              localMatch.completed = false;
-              localMatch.realHomeScore = null;
-              localMatch.realAwayScore = null;
+            if (awayName && localMatch.awayTeam !== awayName) {
+              localMatch.awayTeam = awayName;
               changesMade = true;
+            }
+
+            const finished = realMatch.finished === "TRUE";
+            const isLive = realMatch.time_elapsed && realMatch.time_elapsed !== "finished" && realMatch.time_elapsed !== "notstarted";
+            
+            if (finished) {
+              const hScore = parseInt(realMatch.home_score);
+              const aScore = parseInt(realMatch.away_score);
+              if (!isNaN(hScore) && !isNaN(aScore)) {
+                if (!localMatch.completed || localMatch.realHomeScore !== hScore || localMatch.realAwayScore !== aScore) {
+                  localMatch.realHomeScore = hScore;
+                  localMatch.realAwayScore = aScore;
+                  localMatch.completed = true;
+                  localMatch.status = 'FINISHED';
+                  localMatch.liveHomeScore = null;
+                  localMatch.liveAwayScore = null;
+                  localMatch.minute = null;
+                  changesMade = true;
+                }
+              }
+            } else if (isLive) {
+              const hScore = parseInt(realMatch.home_score) || 0;
+              const aScore = parseInt(realMatch.away_score) || 0;
+              if (localMatch.status !== 'IN_PLAY' || localMatch.liveHomeScore !== hScore || localMatch.liveAwayScore !== aScore) {
+                localMatch.status = 'IN_PLAY';
+                localMatch.liveHomeScore = hScore;
+                localMatch.liveAwayScore = aScore;
+                localMatch.minute = realMatch.time_elapsed || "45'";
+                localMatch.completed = false;
+                localMatch.realHomeScore = null;
+                localMatch.realAwayScore = null;
+                changesMade = true;
+              }
             }
           }
-        }
-      });
+        });
+        internetSuccess = true;
+        console.log("✅ Sincronización en vivo desde worldcup26.ir exitosa.");
+      }
+    } catch (netErr) {
+      console.warn(`⚠️ Proxy ${proxy} falló:`, netErr.message);
     }
-    console.log("Sincronización de resultados finalizados exitosa.");
-  } catch (err) {
-    console.warn("Fallo la API Real (usando simulación local de finalizados):", err.message);
-    
-    // 2. Caer en simulación local si no hay internet o por CORS
-    await new Promise(r => setTimeout(r, 400));
-    
-    const data = {
-      "matches": [
-        {
-          "status": "FINISHED",
-          "homeTeam": { "shortName": "Francia" },
-          "awayTeam": { "shortName": "Senegal" },
-          "score": { "fullTime": { "home": 3, "away": 1 } }
-        },
-        {
-          "status": "FINISHED",
-          "homeTeam": { "shortName": "Irak" },
-          "awayTeam": { "shortName": "Noruega" },
-          "score": { "fullTime": { "home": 1, "away": 4 } }
-        },
-        {
-          "status": "SCHEDULED",
-          "homeTeam": { "shortName": "Argentina" },
-          "awayTeam": { "shortName": "Argelia" },
-          "score": { "fullTime": { "home": null, "away": null } }
-        }
-      ]
-    };
-    
-    if (data && data.matches) {
-      data.matches.forEach(realMatch => {
-        const localMatch = state.matches.find(m => 
-          m.homeTeam.toLowerCase().includes(realMatch.homeTeam.shortName?.toLowerCase() || '') && 
-          m.awayTeam.toLowerCase().includes(realMatch.awayTeam.shortName?.toLowerCase() || '')
-        );
-        
-        if (localMatch) {
-          if (realMatch.status === 'FINISHED') {
-            if (!localMatch.completed || localMatch.realHomeScore !== realMatch.score.fullTime.home || localMatch.realAwayScore !== realMatch.score.fullTime.away || localMatch.status !== 'FINISHED') {
-              localMatch.realHomeScore = realMatch.score.fullTime.home;
-              localMatch.realAwayScore = realMatch.score.fullTime.away;
-              localMatch.completed = true;
-              localMatch.status = 'FINISHED';
-              localMatch.liveHomeScore = null;
-              localMatch.liveAwayScore = null;
-              localMatch.minute = null;
-              changesMade = true;
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // PASO 2: RESPALDO LOCAL (live_api.json) - Solo si internet falló
+  // ═══════════════════════════════════════════════════════════════
+  if (!internetSuccess) {
+    try {
+      const response = await fetch(API_CONFIG.URL);
+      if (response.ok) {
+        const data = await response.json();
+        if (data && data.matches && Array.isArray(data.matches)) {
+          data.matches.forEach(realMatch => {
+            let localMatch = null;
+            const apiId = parseInt(realMatch.id);
+            if (!isNaN(apiId)) {
+              localMatch = state.matches.find(m => m.apiId === apiId);
             }
-          } else {
-            if (localMatch.status === 'IN_PLAY' || localMatch.completed) {
-              localMatch.status = 'SCHEDULED';
-              localMatch.liveHomeScore = null;
-              localMatch.liveAwayScore = null;
-              localMatch.minute = null;
-              localMatch.completed = false;
-              localMatch.realHomeScore = null;
-              localMatch.realAwayScore = null;
-              changesMade = true;
+            if (!localMatch) {
+              localMatch = state.matches.find(m => 
+                normalizeName(m.homeTeam) === normalizeName(realMatch.homeTeam.shortName || '') && 
+                normalizeName(m.awayTeam) === normalizeName(realMatch.awayTeam.shortName || '')
+              );
             }
-          }
+            
+            if (localMatch) {
+              const homeName = realMatch.homeTeam?.shortName;
+              const awayName = realMatch.awayTeam?.shortName;
+              if (homeName && localMatch.homeTeam !== homeName) {
+                localMatch.homeTeam = homeName;
+                changesMade = true;
+              }
+              if (awayName && localMatch.awayTeam !== awayName) {
+                localMatch.awayTeam = awayName;
+                changesMade = true;
+              }
+
+              if (realMatch.status === 'FINISHED') {
+                const hScore = realMatch.score.fullTime.home;
+                const aScore = realMatch.score.fullTime.away;
+                if (!localMatch.completed || localMatch.realHomeScore !== hScore || localMatch.realAwayScore !== aScore) {
+                  localMatch.realHomeScore = hScore;
+                  localMatch.realAwayScore = aScore;
+                  localMatch.completed = true;
+                  localMatch.status = 'FINISHED';
+                  localMatch.liveHomeScore = null;
+                  localMatch.liveAwayScore = null;
+                  localMatch.minute = null;
+                  changesMade = true;
+                }
+              } else if (realMatch.status === 'IN_PLAY') {
+                const hScore = realMatch.score.fullTime.home !== null ? realMatch.score.fullTime.home : 0;
+                const aScore = realMatch.score.fullTime.away !== null ? realMatch.score.fullTime.away : 0;
+                if (localMatch.status !== 'IN_PLAY' || localMatch.liveHomeScore !== hScore || localMatch.liveAwayScore !== aScore) {
+                  localMatch.status = 'IN_PLAY';
+                  localMatch.liveHomeScore = hScore;
+                  localMatch.liveAwayScore = aScore;
+                  localMatch.minute = realMatch.minute || "45'";
+                  localMatch.completed = false;
+                  localMatch.realHomeScore = null;
+                  localMatch.realAwayScore = null;
+                  changesMade = true;
+                }
+              }
+            }
+          });
+          console.log("📁 Sincronización desde live_api.json local (respaldo).");
         }
-      });
+      }
+    } catch (err) {
+      console.error("❌ Error en sincronización local:", err.message);
     }
   }
 
@@ -261,7 +471,8 @@ async function syncLiveResults() {
     renderApp();
   }
   
-  if (syncBtn) syncBtn.textContent = 'Actualizar Datos';
+  if (syncBtn) syncBtn.textContent = internetSuccess ? '✅ Datos Actualizados' : '⚠️ Sin conexión (datos locales)';
+  setTimeout(() => { if (syncBtn) syncBtn.textContent = 'Actualizar Datos'; }, 3000);
 }
 
 
@@ -301,6 +512,7 @@ function populateCountrySelects() {
 function setupNavigation() {
   window.switchTab = (tabId) => {
     state.activeTab = tabId;
+    localStorage.setItem('quiniela_active_tab', tabId);
     
     // Quitar clase activa a botones de pestañas y agregar a la seleccionada
     document.querySelectorAll('.tab-link').forEach(btn => {
@@ -378,22 +590,28 @@ function calculateUserPoints(userId) {
 // ==========================================
 
 function renderApp() {
+  // Existing render logic remains unchanged
+
   updateUserBadge();
   
   if (state.activeTab === 'leaderboard') {
     renderLeaderboard();
   } else if (state.activeTab === 'predictions') {
-    // Verificar acceso a "Mis Pronósticos" (tab predictions)
+    // Verificar acceso a "Mis Marcadores" (tab predictions)
     if (!state.currentUser) {
-      document.getElementById('predictions').innerHTML = `
+      document.getElementById('predictionsContent').style.display = 'none';
+      document.getElementById('predictionsPrivateMessage').style.display = 'block';
+      document.getElementById('predictionsPrivateMessage').innerHTML = `
         <div style="text-align: center; padding: 40px 20px;">
           <h2 style="color: var(--text-dark); margin-bottom: 15px;">🔒 Acceso Privado</h2>
-          <p style="color: var(--text-light); margin-bottom: 25px;">Debes iniciar sesión con tu usuario y PIN para ver o editar tus pronósticos.</p>
+          <p style="color: var(--text-light); margin-bottom: 25px;">Debes iniciar sesión con tu usuario y PIN para ver o editar tus marcadores.</p>
           <button class="btn-primary" onclick="openLoginModal()" style="padding: 12px 30px; font-size: 1.1rem; border-radius: 8px;">Iniciar Sesión</button>
         </div>
       `;
       return;
     }
+    document.getElementById('predictionsContent').style.display = 'block';
+    document.getElementById('predictionsPrivateMessage').style.display = 'none';
     renderPredictions();
   } else if (state.activeTab === 'groupStage') {
     if (!state.currentUser) {
@@ -418,7 +636,10 @@ function updateUserBadge() {
   if (state.currentUser) {
     if (loggedOutControls) loggedOutControls.style.display = 'none';
     if (loggedInControls) loggedInControls.style.display = 'flex';
-    if (nameEl) nameEl.textContent = state.currentUser.name;
+    if (nameEl) {
+      const simpleName = state.currentUser.name.split(' ')[0];
+      nameEl.textContent = simpleName;
+    }
     if (avatarEl) avatarEl.textContent = state.currentUser.avatar || '⚽';
     if (groupStageLink) groupStageLink.style.display = 'inline-block';
     if (premiosLink) premiosLink.style.display = 'inline-block';
@@ -473,6 +694,10 @@ function renderLeaderboard() {
               <div style="font-size: 1.1rem; font-weight: 800; color: var(--accent-bronze);">🥉 3er Lugar</div>
               <div style="font-size: 1.8rem; font-weight: 800; color: var(--text-primary);">20$</div>
             </div>
+          </div>
+          
+          <div style="margin-top: 20px; text-align: center; font-size: 0.95rem; color: var(--text-secondary); font-weight: 600; padding-top: 15px; border-top: 1px dashed var(--border-color); opacity: 0.85;">
+            ¿Quedaste después del 3er lugar? Muchas gracias por participar, sigue intentando.
           </div>
         </div>
         
@@ -630,8 +855,12 @@ function renderPredictions() {
     if (state.currentPredictionFilter === 'Completed') {
       return hasPred || match.completed;
     }
-    
     return true;
+  });
+  
+  // Ordenar cronológicamente de forma estricta
+  filteredMatches.sort((a, b) => {
+    return parseMatchDateAsUTC(a.date).getTime() - parseMatchDateAsUTC(b.date).getTime();
   });
   
   if (filteredMatches.length === 0) {
@@ -675,16 +904,18 @@ function renderPredictions() {
       pointsHtml = `<span class="match-points-awarded live-badge" style="background: rgba(220, 38, 38, 0.08); color: var(--accent-red); border-color: rgba(220, 38, 38, 0.2);">Partido en curso</span>`;
     }
     
-    // Deshabilitar inputs si el partido ya se jugó o está en curso (En Vivo)
-    const disabledAttr = (match.completed || isLive) ? 'disabled' : '';
+    // Calcular si falta menos de 1 hora para el partido (basado en marcas de tiempo universales)
+    const matchDateUTC = parseMatchDateAsUTC(match.date);
+    const now = new Date();
+    const timeDiff = matchDateUTC.getTime() - now.getTime();
+    const isLockedByTime = timeDiff < (60 * 60 * 1000); // Menos de 1 hora (3600000 ms)
+    const isUndetermined = isMatchUndetermined(match);
     
-    // Formato de fecha limpio
-    const matchDateFormatted = new Date(match.date.replace(/-/g, "/")).toLocaleString('es-ES', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    // Deshabilitar inputs si el partido ya se jugó, está en curso, ya tiene un pronóstico guardado, está fuera de tiempo o está indeterminado
+    const disabledAttr = (match.completed || isLive || hasPrediction || isLockedByTime || isUndetermined) ? 'disabled' : '';
+    
+    // Formato de fecha en horario Caracas (12 horas)
+    const matchDateFormatted = formatMatchDateToCaracas12h(match.date);
     
     card.innerHTML = `
       <div class="match-header">
@@ -699,12 +930,12 @@ function renderPredictions() {
         <!-- Equipo Local -->
         <div class="team-row">
           <div class="team-info">
+            <span style="font-size: 1.2rem; margin-right: 6px;">${getCountryFlag(match.homeTeam)}</span>
             <span class="team-name">${match.homeTeam}</span>
           </div>
           <div class="score-inputs">
             <input type="number" class="score-input" min="0" max="99" 
-              value="${prediction.homeScore}" ${disabledAttr} 
-              oninput="savePrediction('${match.id}', 'home', this.value)" 
+              id="home_${match.id}" value="${prediction.homeScore}" ${disabledAttr} 
               placeholder="-">
           </div>
         </div>
@@ -712,12 +943,12 @@ function renderPredictions() {
         <!-- Equipo Visitante -->
         <div class="team-row">
           <div class="team-info">
+            <span style="font-size: 1.2rem; margin-right: 6px;">${getCountryFlag(match.awayTeam)}</span>
             <span class="team-name">${match.awayTeam}</span>
           </div>
           <div class="score-inputs">
             <input type="number" class="score-input" min="0" max="99" 
-              value="${prediction.awayScore}" ${disabledAttr} 
-              oninput="savePrediction('${match.id}', 'away', this.value)" 
+              id="away_${match.id}" value="${prediction.awayScore}" ${disabledAttr} 
               placeholder="-">
           </div>
         </div>
@@ -734,10 +965,22 @@ function renderPredictions() {
               Real: <span class="real-score-badge" style="background: rgba(220, 38, 38, 0.08); border-color: rgba(220, 38, 38, 0.2); color: var(--accent-red);">${match.liveHomeScore} - ${match.liveAwayScore}</span>
               <span class="live-minute" style="font-size: 0.8rem; background: var(--text-primary); color: #fff; padding: 2px 6px; border-radius: 4px;">${match.minute}</span>
             </div>
-          ` : `
-            <span class="prediction-status ${hasPrediction ? 'status-saved' : 'status-empty'}">
-              ${hasPrediction ? '✓ Guardado' : '⚽ Sin pronóstico'}
+          ` : hasPrediction ? `
+            <span class="prediction-status status-saved" style="background: rgba(2, 86, 214, 0.05); color: var(--accent-soccer); border: 1px solid rgba(2, 86, 214, 0.15);">
+              ✓ Guardado (Bloqueado)
             </span>
+          ` : isLockedByTime ? `
+            <span class="prediction-status status-locked" style="background: rgba(220, 38, 38, 0.05); color: var(--accent-red); border: 1px solid rgba(220, 38, 38, 0.15);">
+              ❌ Cerrado (Fuera de tiempo)
+            </span>
+          ` : isUndetermined ? `
+            <span class="prediction-status status-undetermined" style="background: rgba(148, 163, 184, 0.05); color: var(--text-muted); border: 1px solid rgba(148, 163, 184, 0.15); font-size: 0.8rem; padding: 6px 12px; border-radius: 6px; font-weight: 600;">
+              Esperando equipos
+            </span>
+          ` : `
+            <button class="btn btn-primary" onclick="confirmAndSavePrediction('${match.id}')" style="font-size: 0.8rem; padding: 8px 16px; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer;">
+              Guardar Pronóstico
+            </button>
           `}
         </div>
         <div>
@@ -850,15 +1093,22 @@ window.loginUser = () => {
   }
 
   const cleanId = normalizeName(usernameInput);
-  const user = state.users.find(u => u.id === cleanId);
+  const user = state.users.find(u => {
+    const userIdMatch = u.id === cleanId;
+    const fullNameMatch = normalizeName(u.name) === cleanId;
+    const firstNameMatch = normalizeName(u.name.split(' ')[0]) === cleanId;
+    return userIdMatch || fullNameMatch || firstNameMatch;
+  });
 
   if (!user) {
     alert("Usuario no encontrado.");
     return;
   }
 
+  const simpleName = user.name.split(' ')[0];
+
   if (user.pin === null) {
-    alert(`Hola ${user.name}. Tu usuario está precargado en el sistema, pero aún no has establecido tu PIN secreto. Haz clic en "¿Eres nuevo? Crea tu usuario aquí" para registrar tu PIN por primera vez.`);
+    alert(`Hola ${simpleName}. Tu usuario está precargado en el sistema, pero aún no has establecido tu PIN secreto. Haz clic en "¿Eres nuevo? Crea tu usuario aquí" para registrar tu PIN por primera vez.`);
     return;
   }
 
@@ -869,17 +1119,18 @@ window.loginUser = () => {
 
   // Éxito
   state.currentUser = user;
-  localStorage.setItem('quiniela_last_username', user.name); // Guardar último usuario
+  localStorage.setItem('quiniela_last_username', simpleName); // Guardar último usuario como nombre simple
   saveStateToStorage();
   closeModal('loginModal');
-  switchTab('predictions'); // Ir directamente a mis pronósticos
+  switchTab('predictions'); // Ir directamente a mis marcadores
 };
 
 // Cerrar sesión
 window.logoutUser = () => {
   if (confirm("¿Estás seguro de que quieres cerrar sesión?")) {
     if (state.currentUser) {
-      localStorage.setItem('quiniela_last_username', state.currentUser.name);
+      const simpleName = state.currentUser.name.split(' ')[0];
+      localStorage.setItem('quiniela_last_username', simpleName);
     }
     state.currentUser = null;
     localStorage.removeItem('quiniela_current_user');
@@ -932,8 +1183,14 @@ window.registerUser = () => {
   const cleanId = normalizeName(name);
   
   // Vincular a usuario existente si ya estaba en el ranking
-  const existingUser = state.users.find(u => u.id === cleanId);
+  const existingUser = state.users.find(u => {
+    const userIdMatch = u.id === cleanId;
+    const fullNameMatch = normalizeName(u.name) === cleanId;
+    const firstNameMatch = normalizeName(u.name.split(' ')[0]) === cleanId;
+    return userIdMatch || fullNameMatch || firstNameMatch;
+  });
   if (existingUser) {
+    const simpleName = existingUser.name.split(' ')[0];
     if (existingUser.pin) {
       // Si el usuario ya tiene PIN registrado, no puede volver a registrarse
       alert("Este usuario ya está registrado en el sistema y tiene un PIN. Si eres tú, debes ir a Iniciar Sesión.");
@@ -943,10 +1200,10 @@ window.registerUser = () => {
       existingUser.pin = pin;
       existingUser.avatar = selectedAvatarEmoji;
       state.currentUser = existingUser;
-      localStorage.setItem('quiniela_last_username', existingUser.name); // Guardar último usuario
+      localStorage.setItem('quiniela_last_username', simpleName); // Guardar último usuario como nombre simple
       saveStateToStorage();
       closeModal('registerUserModal');
-      alert(`¡Hola ${existingUser.name}! Has reclamado tu cuenta. Tu nuevo PIN privado ha sido guardado. Iniciando sesión...`);
+      alert(`¡Hola ${simpleName}! Has reclamado tu cuenta. Tu nuevo PIN privado ha sido guardado. Iniciando sesión...`);
       switchTab('predictions');
       return;
     }
@@ -962,11 +1219,12 @@ window.registerUser = () => {
   
   state.users.push(newUser);
   state.currentUser = newUser;
-  localStorage.setItem('quiniela_last_username', name); // Guardar último usuario
+  const simpleName = name.split(' ')[0];
+  localStorage.setItem('quiniela_last_username', simpleName); // Guardar último usuario como nombre simple
   saveStateToStorage();
   closeModal('registerUserModal');
   
-  alert(`¡Cuenta creada con éxito! Bienvenido a Audioplace Quiniela 2026, ${name}.`);
+  alert(`¡Cuenta creada con éxito! Bienvenido a Audioplace Quiniela 2026, ${simpleName}.`);
   switchTab('predictions');
 };
 
@@ -1043,12 +1301,18 @@ window.openUserStatsModal = (userId) => {
     row.style = rowStyle;
     
     row.innerHTML = `
-      <div class="stats-match-team">${match.homeTeam}</div>
+      <div class="stats-match-team" style="display: flex; align-items: center; gap: 6px;">
+        <span style="font-size: 1.1rem; line-height: 1;">${getCountryFlag(match.homeTeam)}</span>
+        <span>${match.homeTeam}</span>
+      </div>
       <div class="stats-match-scores">
         <span class="stats-pred-pill">Pronóstico: ${predDisplay} ${pointsIndicator}</span>
         <span class="stats-real-pill">Resultado: ${realDisplay}</span>
       </div>
-      <div class="stats-match-team away">${match.awayTeam}</div>
+      <div class="stats-match-team away" style="display: flex; align-items: center; justify-content: flex-end; gap: 6px;">
+        <span>${match.awayTeam}</span>
+        <span style="font-size: 1.1rem; line-height: 1;">${getCountryFlag(match.awayTeam)}</span>
+      </div>
     `;
     
     listEl.appendChild(row);
@@ -1081,11 +1345,17 @@ window.renderAdminPanel = () => {
       </div>
       <div class="match-teams-score">
         <div class="team-row">
-          <span class="team-name">${match.homeTeam}</span>
+          <span class="team-name" style="display: flex; align-items: center; gap: 6px;">
+            <span style="font-size: 1.1rem; line-height: 1;">${getCountryFlag(match.homeTeam)}</span>
+            <span>${match.homeTeam}</span>
+          </span>
           <input type="number" class="score-input" id="adminHome_${match.id}" value="${homeVal}" placeholder="-" style="width: 50px; height: 35px; font-size: 1.1rem;">
         </div>
         <div class="team-row">
-          <span class="team-name">${match.awayTeam}</span>
+          <span class="team-name" style="display: flex; align-items: center; gap: 6px;">
+            <span style="font-size: 1.1rem; line-height: 1;">${getCountryFlag(match.awayTeam)}</span>
+            <span>${match.awayTeam}</span>
+          </span>
           <input type="number" class="score-input" id="adminAway_${match.id}" value="${awayVal}" placeholder="-" style="width: 50px; height: 35px; font-size: 1.1rem;">
         </div>
       </div>
@@ -1222,7 +1492,13 @@ window.loadParticipantPredictionsAdmin = () => {
       card.style.padding = '10px';
       
       card.innerHTML = `
-        <div style="font-size: 0.8rem; font-weight: bold; margin-bottom: 5px;">${match.homeTeam} vs ${match.awayTeam}</div>
+        <div style="font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; display: flex; align-items: center; gap: 4px;">
+          <span>${getCountryFlag(match.homeTeam)}</span>
+          <span>${match.homeTeam}</span>
+          <span>vs</span>
+          <span>${getCountryFlag(match.awayTeam)}</span>
+          <span>${match.awayTeam}</span>
+        </div>
         <div style="display: flex; gap: 10px; align-items: center;">
           <input type="number" class="score-input" id="adminPredHome_${match.id}" value="${pred.homeScore}" placeholder="-" style="width: 40px; height: 35px; font-size: 1rem;">
           <span>-</span>
@@ -1297,9 +1573,38 @@ window.addNewMatch = () => {
 // RENDERIZADO DE FASE DE GRUPOS Y PREMIOS
 // ==========================================
 
+window.selectGroupTab = (groupCode, btn) => {
+  state.activeGroupStage = groupCode;
+  
+  const container = document.getElementById('groupStageSelectorContainer');
+  if (container) {
+    container.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+  }
+  if (btn) {
+    btn.classList.add('active');
+  }
+  
+  renderGroupStageTab();
+};
+
 window.renderGroupStageTab = () => {
-  const groupSelector = document.getElementById('groupStageSelector');
-  const group = groupSelector ? groupSelector.value : 'A';
+  if (!state.activeGroupStage) {
+    state.activeGroupStage = 'A';
+  }
+  const group = state.activeGroupStage;
+  
+  // Sincronizar clases activas en los botones de grupo
+  const groupContainer = document.getElementById('groupStageSelectorContainer');
+  if (groupContainer) {
+    groupContainer.querySelectorAll('.btn-filter').forEach(btn => {
+      const isCurrent = btn.getAttribute('onclick').includes(`'${group}'`);
+      if (isCurrent) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  }
   
   const groupMatches = state.matches.filter(m => m.group === group && m.stage === "Fase de Grupos");
   
@@ -1391,7 +1696,10 @@ window.renderGroupStageTab = () => {
       tr.style.borderBottom = '1px solid var(--border-color)';
       tr.innerHTML = `
         <td style="padding: 12px 5px; font-weight: 700;">${i + 1}</td>
-        <td style="padding: 12px 5px; font-weight: 600;">${t.name}</td>
+        <td style="padding: 12px 5px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.1rem; line-height: 1;">${getCountryFlag(t.name)}</span>
+          <span>${t.name}</span>
+        </td>
         <td style="text-align: center; padding: 12px 5px;">${t.pj}</td>
         <td style="text-align: center; padding: 12px 5px;">${t.pg}</td>
         <td style="text-align: center; padding: 12px 5px;">${t.pe}</td>
@@ -1414,7 +1722,7 @@ window.renderGroupStageTab = () => {
     if (groupMatches.length === 0) {
       matchesList.innerHTML = `<p style="color: var(--text-muted); text-align: center; padding: 20px;">No hay partidos en este grupo.</p>`;
     } else {
-      const sortedMatches = [...groupMatches].sort((a, b) => new Date(a.date.replace(/-/g, "/")) - new Date(b.date.replace(/-/g, "/")));
+      const sortedMatches = [...groupMatches].sort((a, b) => parseMatchDateAsUTC(a.date) - parseMatchDateAsUTC(b.date));
       
       sortedMatches.forEach(m => {
         const isLive = m.status === 'IN_PLAY';
@@ -1437,23 +1745,24 @@ window.renderGroupStageTab = () => {
           statusClass = 'live';
         }
         
-        const matchDateFormatted = new Date(m.date.replace(/-/g, "/")).toLocaleString('es-ES', {
-          month: 'short',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
-        });
+        const matchDateFormatted = formatMatchDateToCaracas12h(m.date);
         
         const row = document.createElement('div');
         row.className = 'group-match-row';
         row.innerHTML = `
           <div class="group-match-teams">
             <div class="group-match-team-line">
-              <span>${m.homeTeam}</span>
+              <span style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 1.1rem; line-height: 1;">${getCountryFlag(m.homeTeam)}</span>
+                <span>${m.homeTeam}</span>
+              </span>
               <span class="group-match-score-pill ${isLive ? 'live' : ''}">${scoreHome}</span>
             </div>
             <div class="group-match-team-line">
-              <span>${m.awayTeam}</span>
+              <span style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 1.1rem; line-height: 1;">${getCountryFlag(m.awayTeam)}</span>
+                <span>${m.awayTeam}</span>
+              </span>
               <span class="group-match-score-pill ${isLive ? 'live' : ''}">${scoreAway}</span>
             </div>
           </div>
@@ -1483,4 +1792,64 @@ window.pressPinKey = (key) => {
   } else {
     pinInput.value += key;
   }
+};
+
+window.pressRegisterPinKey = (key) => {
+  const pinInput = document.getElementById('newUserPin');
+  if (!pinInput) return;
+  
+  if (key === 'clear') {
+    pinInput.value = '';
+  } else if (key === 'backspace') {
+    pinInput.value = pinInput.value.slice(0, -1);
+  } else {
+    pinInput.value += key;
+  }
+};
+
+window.confirmAndSavePrediction = (matchId) => {
+  if (!state.currentUser) return;
+  const match = state.matches.find(m => m.id === matchId);
+  if (!match) return;
+  
+  if (isMatchUndetermined(match)) {
+    alert("No puedes pronosticar este partido hasta que se definan los equipos participantes.");
+    return;
+  }
+  
+  const matchDateUTC = parseMatchDateAsUTC(match.date);
+  const now = new Date();
+  const timeDiff = matchDateUTC.getTime() - now.getTime();
+  if (timeDiff < (60 * 60 * 1000)) {
+    alert("El tiempo límite para guardar este pronóstico ha expirado (máximo 1 hora antes del partido en horario de Caracas).");
+    return;
+  }
+  
+  const homeInput = document.getElementById(`home_${matchId}`);
+  const awayInput = document.getElementById(`away_${matchId}`);
+  if (!homeInput || !awayInput) return;
+  
+  const homeVal = homeInput.value.trim();
+  const awayVal = awayInput.value.trim();
+  
+  if (homeVal === '' || awayVal === '') {
+    alert("Por favor ingresa ambos marcadores antes de guardar.");
+    return;
+  }
+  
+  const confirmMsg = "¿Estás seguro de guardar este pronóstico? Recuerda que una vez guardado NO se podrá volver a editar.";
+  if (confirm(confirmMsg)) {
+    const currentUserId = state.currentUser.id;
+    const predictionKey = `${currentUserId}_${matchId}`;
+    state.predictions[predictionKey] = {
+      homeScore: parseInt(homeVal),
+      awayScore: parseInt(awayVal)
+    };
+    saveStateToStorage();
+    renderApp();
+  }
+};
+
+window.filterMatches = () => {
+  renderPredictions();
 };

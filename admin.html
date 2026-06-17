@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚙️ Administrador Quiniela 2026</title>
+  <meta name="description" content="Panel de administración para actualizar resultados de la quiniela Mundial 2026.">
+  <link rel="stylesheet" href="style.css?v=6">
+  <link rel="stylesheet" href="admin.css?v=1">
+  <style>
+    /* Simple glassmorphism for admin container */
+    .admin-panel {background: rgba(255,255,255,0.1); backdrop-filter: blur(8px); border-radius: 12px; padding: 20px; max-width: 900px; margin: 40px auto; box-shadow: 0 8px 32px rgba(0,0,0,0.2);}
+    .match-row {display: flex; gap: 10px; align-items: center; margin-bottom: 12px;}
+    .match-row input {width: 60px; padding: 6px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-primary); color: var(--text-primary);}
+    .match-row button {padding: 6px 12px; border: none; border-radius: 6px; background: var(--accent-soccer); color:#fff; cursor:pointer;}
+  </style>
+</head>
+<body>
+  <header class="container header-content" style="margin-top:20px;">
+    <h1>⚙️ Panel de Administrador</h1>
+    <p>Actualiza los marcadores finales de los partidos manualmente.</p>
+  </header>
+    <div style="display:flex;justify-content:center;gap:12px;margin:20px 0;">
+      <button id="homeBtn" onclick="window.location.href='index.html'" style="padding:8px 16px;background:var(--accent-soccer);color:#fff;border:none;border-radius:6px;cursor:pointer;">Inicio</button>
+      <button id="adminLogoutBtn" onclick="adminLogout()" style="padding:8px 16px;background:#c33;color:#fff;border:none;border-radius:6px;cursor:pointer;">Cerrar Sesión</button>
+    </div>
+    <!-- Stage tabs -->
+    <div class="stage-tabs" style="display:flex;justify-content:center;gap:8px;margin-bottom:20px;">
+      <button class="stage-tab" onclick="setStage('')" style="padding:6px 12px;border:none;border-radius:4px;background:#eee;cursor:pointer;">Todas</button>
+      <button class="stage-tab" onclick="setStage('Fase de Grupos')" style="padding:6px 12px;border:none;border-radius:4px;background:#eee;cursor:pointer;">Grupos</button>
+      <button class="stage-tab" onclick="setStage('Dieciseisavos de Final')" style="padding:6px 12px;border:none;border-radius:4px;background:#eee;cursor:pointer;">Dieciseisavos</button>
+      <button class="stage-tab" onclick="setStage('Cuartos de Final')" style="padding:6px 12px;border:none;border-radius:4px;background:#eee;cursor:pointer;">Cuartos</button>
+      <button class="stage-tab" onclick="setStage('Semifinales')" style="padding:6px 12px;border:none;border-radius:4px;background:#eee;cursor:pointer;">Semifinales</button>
+<button class="stage-tab" onclick="setStage('Final')" style="padding:6px 12px;border:none;border-radius:4px;background:#eee;cursor:pointer;">Final</button>
+<button class="stage-tab" onclick="setStage('Tercer Puesto')" style="padding:6px 12px;border:none;border-radius:4px;background:#eee;cursor:pointer;">Tercer Puesto</button>
+    </div>
+   <main class="container admin-panel" id="adminPanel">
+    <!-- Content will be injected by admin.js -->
+  </main>
+  <script src="admin.js?v=1"></script>
+</body>
+</html>

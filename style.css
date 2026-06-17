@@ -28,6 +28,61 @@
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+body.dark-theme {
+  --bg-primary: #0b0f19; /* Fondo principal más oscuro */
+  --bg-secondary: #172033; /* Fondo de contenedor más diferenciado */
+  --bg-card: #1f2a40; /* Fondo de tarjeta claro */
+  --bg-card-hover: #2a3954; /* Hover de tarjeta */
+  --border-color: rgba(255, 255, 255, 0.15); /* Bordes más marcados y nítidos */
+  --border-glow: rgba(59, 130, 246, 0.45); /* Brillo más vibrante */
+  
+  --text-primary: #ffffff; /* Texto principal en blanco puro */
+  --text-secondary: #e2e8f0; /* Texto secundario de alta legibilidad */
+  --text-muted: #94a3b8; /* Gris medio para texto silenciado */
+  
+  --accent-soccer: #3b82f6;
+  --accent-gold: #fbbf24;
+  --accent-silver: #cbd5e1;
+  --accent-bronze: #fb923c;
+  --accent-blue: #60a5fa;
+  --accent-red: #f87171;
+  
+  --shadow-glow: 0 10px 25px rgba(59, 130, 246, 0.15);
+}
+
+body.dark-theme header {
+  background: rgba(23, 32, 51, 0.85);
+  border-bottom: 1px solid var(--border-color);
+}
+
+body.dark-theme body {
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 45%),
+    radial-gradient(circle at 90% 80%, rgba(96, 165, 250, 0.08) 0%, transparent 45%);
+}
+
+/* Ajustes de contraste para inputs en modo oscuro */
+body.dark-theme .score-input,
+body.dark-theme .input-select,
+body.dark-theme .input-text {
+  border: 2px solid rgba(255, 255, 255, 0.22);
+  background-color: #0b0f19;
+  color: #ffffff;
+}
+
+body.dark-theme .score-input:focus,
+body.dark-theme .input-select:focus,
+body.dark-theme .input-text:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
+}
+
+body.dark-theme .score-input:disabled {
+  background-color: #172033;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;

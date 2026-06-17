@@ -1,38 +1,1772 @@
 {
-  "matches": [
-    {
-      "status": "FINISHED",
-      "homeTeam": { "shortName": "Francia" },
-      "awayTeam": { "shortName": "Senegal" },
-      "score": {
-        "fullTime": {
-          "home": 3,
-          "away": 1
-        }
-      }
-    },
-    {
-      "status": "FINISHED",
-      "homeTeam": { "shortName": "Irak" },
-      "awayTeam": { "shortName": "Noruega" },
-      "score": {
-        "fullTime": {
-          "home": 0,
-          "away": 2
-        }
-      }
-    },
-    {
-      "status": "IN_PLAY",
-      "homeTeam": { "shortName": "Argentina" },
-      "awayTeam": { "shortName": "Argelia" },
-      "score": {
-        "fullTime": {
-          "home": 1,
-          "away": 0
-        }
-      },
-      "minute": "75'"
-    }
-  ]
+    "matches":  [
+                    {
+                        "id":  6,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Turquía"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  2,
+                                                       "away":  0
+                                                   }
+                                  },
+                        "status":  "FINISHED",
+                        "homeTeam":  {
+                                         "shortName":  "Australia"
+                                     }
+                    },
+                    {
+                        "id":  8,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Suiza"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  1,
+                                                       "away":  1
+                                                   }
+                                  },
+                        "status":  "FINISHED",
+                        "homeTeam":  {
+                                         "shortName":  "Catar"
+                                     }
+                    },
+                    {
+                        "id":  31,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Australia"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "EE.UU."
+                                     }
+                    },
+                    {
+                        "id":  33,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Costa de Marfil"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Alemania"
+                                     }
+                    },
+                    {
+                        "id":  35,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Suecia"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Países Bajos"
+                                     }
+                    },
+                    {
+                        "id":  41,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Irak"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Francia"
+                                     }
+                    },
+                    {
+                        "id":  42,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Senegal"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Noruega"
+                                     }
+                    },
+                    {
+                        "id":  59,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Suecia"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Japón"
+                                     }
+                    },
+                    {
+                        "id":  95,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Ganador Partido 88"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Ganador Partido 86"
+                                     }
+                    },
+                    {
+                        "id":  101,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Ganador Partido 98"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Ganador Partido 97"
+                                     }
+                    },
+                    {
+                        "id":  102,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Ganador Partido 100"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Ganador Partido 99"
+                                     }
+                    },
+                    {
+                        "id":  5,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Escocia"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  0,
+                                                       "away":  1
+                                                   }
+                                  },
+                        "status":  "FINISHED",
+                        "homeTeam":  {
+                                         "shortName":  "Haití"
+                                     }
+                    },
+                    {
+                        "id":  22,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Croacia"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Inglaterra"
+                                     }
+                    },
+                    {
+                        "id":  39,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Arabia Saudita"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "España"
+                                     }
+                    },
+                    {
+                        "id":  44,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Argelia"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Jordania"
+                                     }
+                    },
+                    {
+                        "id":  45,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Uzbekistán"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Portugal"
+                                     }
+                    },
+                    {
+                        "id":  46,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Croacia"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Panamá"
+                                     }
+                    },
+                    {
+                        "id":  52,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "México"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Chequia"
+                                     }
+                    },
+                    {
+                        "id":  60,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Países Bajos"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Túnez"
+                                     }
+                    },
+                    {
+                        "id":  61,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Irak"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Senegal"
+                                     }
+                    },
+                    {
+                        "id":  67,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Inglaterra"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Panamá"
+                                     }
+                    },
+                    {
+                        "id":  72,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Uzbekistán"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "RD Congo"
+                                     }
+                    },
+                    {
+                        "id":  86,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Segundo Grupo H"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Ganador Grupo J"
+                                     }
+                    },
+                    {
+                        "id":  88,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Segundo Grupo G"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Segundo Grupo D"
+                                     }
+                    },
+                    {
+                        "id":  100,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Ganador Partido 96"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Ganador Partido 95"
+                                     }
+                    },
+                    {
+                        "id":  2,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Chequia"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  2,
+                                                       "away":  1
+                                                   }
+                                  },
+                        "status":  "FINISHED",
+                        "homeTeam":  {
+                                         "shortName":  "Corea del Sur"
+                                     }
+                    },
+                    {
+                        "id":  4,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Paraguay"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  4,
+                                                       "away":  1
+                                                   }
+                                  },
+                        "status":  "FINISHED",
+                        "homeTeam":  {
+                                         "shortName":  "EE.UU."
+                                     }
+                    },
+                    {
+                        "id":  17,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Senegal"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  3,
+                                                       "away":  1
+                                                   }
+                                  },
+                        "status":  "FINISHED",
+                        "homeTeam":  {
+                                         "shortName":  "Francia"
+                                     }
+                    },
+                    {
+                        "id":  18,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Noruega"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  1,
+                                                       "away":  4
+                                                   }
+                                  },
+                        "status":  "FINISHED",
+                        "homeTeam":  {
+                                         "shortName":  "Irak"
+                                     }
+                    },
+                    {
+                        "id":  21,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "RD Congo"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Portugal"
+                                     }
+                    },
+                    {
+                        "id":  37,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Irán"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Bélgica"
+                                     }
+                    },
+                    {
+                        "id":  50,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Haití"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Marruecos"
+                                     }
+                    },
+                    {
+                        "id":  51,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Corea del Sur"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Sudáfrica"
+                                     }
+                    },
+                    {
+                        "id":  87,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "3ro Grupo D/E/I/J/L"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Ganador Grupo K"
+                                     }
+                    },
+                    {
+                        "id":  98,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Ganador Partido 94"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Ganador Partido 93"
+                                     }
+                    },
+                    {
+                        "id":  9,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Ecuador"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  1,
+                                                       "away":  0
+                                                   }
+                                  },
+                        "status":  "FINISHED",
+                        "homeTeam":  {
+                                         "shortName":  "Costa de Marfil"
+                                     }
+                    },
+                    {
+                        "id":  10,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Curaçao"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  7,
+                                                       "away":  1
+                                                   }
+                                  },
+                        "status":  "FINISHED",
+                        "homeTeam":  {
+                                         "shortName":  "Alemania"
+                                     }
+                    },
+                    {
+                        "id":  12,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Túnez"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  5,
+                                                       "away":  1
+                                                   }
+                                  },
+                        "status":  "FINISHED",
+                        "homeTeam":  {
+                                         "shortName":  "Suecia"
+                                     }
+                    },
+                    {
+                        "id":  25,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Corea del Sur"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "México"
+                                     }
+                    },
+                    {
+                        "id":  27,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Catar"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Canadá"
+                                     }
+                    },
+                    {
+                        "id":  30,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Marruecos"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Escocia"
+                                     }
+                    },
+                    {
+                        "id":  32,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Paraguay"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Turquía"
+                                     }
+                    },
+                    {
+                        "id":  43,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Austria"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Argentina"
+                                     }
+                    },
+                    {
+                        "id":  49,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Brasil"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Escocia"
+                                     }
+                    },
+                    {
+                        "id":  53,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Catar"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Bosnia y Herzegovina"
+                                     }
+                    },
+                    {
+                        "id":  58,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "EE.UU."
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Turquía"
+                                     }
+                    },
+                    {
+                        "id":  62,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Francia"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Noruega"
+                                     }
+                    },
+                    {
+                        "id":  63,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Irán"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Egipto"
+                                     }
+                    },
+                    {
+                        "id":  65,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Arabia Saudita"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Cabo Verde"
+                                     }
+                    },
+                    {
+                        "id":  66,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "España"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Uruguay"
+                                     }
+                    },
+                    {
+                        "id":  70,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Argentina"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Jordania"
+                                     }
+                    },
+                    {
+                        "id":  76,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Segundo Grupo F"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Ganador Grupo C"
+                                     }
+                    },
+                    {
+                        "id":  83,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Segundo Grupo L"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Segundo Grupo K"
+                                     }
+                    },
+                    {
+                        "id":  85,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "3ro Grupo E/F/G/I/J"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Ganador Grupo B"
+                                     }
+                    },
+                    {
+                        "id":  93,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Ganador Partido 84"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Ganador Partido 83"
+                                     }
+                    },
+                    {
+                        "id":  96,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Ganador Partido 87"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Ganador Partido 85"
+                                     }
+                    },
+                    {
+                        "id":  1,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Sudáfrica"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  2,
+                                                       "away":  0
+                                                   }
+                                  },
+                        "status":  "FINISHED",
+                        "homeTeam":  {
+                                         "shortName":  "México"
+                                     }
+                    },
+                    {
+                        "id":  7,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Marruecos"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  1,
+                                                       "away":  1
+                                                   }
+                                  },
+                        "status":  "FINISHED",
+                        "homeTeam":  {
+                                         "shortName":  "Brasil"
+                                     }
+                    },
+                    {
+                        "id":  11,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Japón"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  2,
+                                                       "away":  2
+                                                   }
+                                  },
+                        "status":  "FINISHED",
+                        "homeTeam":  {
+                                         "shortName":  "Países Bajos"
+                                     }
+                    },
+                    {
+                        "id":  26,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Bosnia y Herzegovina"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Suiza"
+                                     }
+                    },
+                    {
+                        "id":  29,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Haití"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Brasil"
+                                     }
+                    },
+                    {
+                        "id":  36,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Japón"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Túnez"
+                                     }
+                    },
+                    {
+                        "id":  38,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Egipto"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Nueva Zelanda"
+                                     }
+                    },
+                    {
+                        "id":  40,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Cabo Verde"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Uruguay"
+                                     }
+                    },
+                    {
+                        "id":  47,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "RD Congo"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Colombia"
+                                     }
+                    },
+                    {
+                        "id":  71,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Portugal"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Colombia"
+                                     }
+                    },
+                    {
+                        "id":  73,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Segundo Grupo B"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Segundo Grupo A"
+                                     }
+                    },
+                    {
+                        "id":  77,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "3ro Grupo C/D/F/G/H"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Ganador Grupo I"
+                                     }
+                    },
+                    {
+                        "id":  84,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Segundo Grupo J"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Ganador Grupo H"
+                                     }
+                    },
+                    {
+                        "id":  90,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Ganador Partido 75"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Ganador Partido 73"
+                                     }
+                    },
+                    {
+                        "id":  92,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Ganador Partido 80"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Ganador Partido 79"
+                                     }
+                    },
+                    {
+                        "id":  94,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Ganador Partido 82"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Ganador Partido 81"
+                                     }
+                    },
+                    {
+                        "id":  14,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Cabo Verde"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  0,
+                                                       "away":  0
+                                                   }
+                                  },
+                        "status":  "FINISHED",
+                        "homeTeam":  {
+                                         "shortName":  "España"
+                                     }
+                    },
+                    {
+                        "id":  16,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Uruguay"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  1,
+                                                       "away":  1
+                                                   }
+                                  },
+                        "status":  "FINISHED",
+                        "homeTeam":  {
+                                         "shortName":  "Arabia Saudita"
+                                     }
+                    },
+                    {
+                        "id":  20,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Jordania"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Austria"
+                                     }
+                    },
+                    {
+                        "id":  23,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Colombia"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Uzbekistán"
+                                     }
+                    },
+                    {
+                        "id":  91,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Ganador Partido 78"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Ganador Partido 76"
+                                     }
+                    },
+                    {
+                        "id":  97,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Ganador Partido 90"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Ganador Partido 89"
+                                     }
+                    },
+                    {
+                        "id":  104,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Ganador Partido 102"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Ganador Partido 101"
+                                     }
+                    },
+                    {
+                        "id":  3,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Bosnia y Herzegovina"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  1,
+                                                       "away":  1
+                                                   }
+                                  },
+                        "status":  "FINISHED",
+                        "homeTeam":  {
+                                         "shortName":  "Canadá"
+                                     }
+                    },
+                    {
+                        "id":  13,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Nueva Zelanda"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  2,
+                                                       "away":  2
+                                                   }
+                                  },
+                        "status":  "FINISHED",
+                        "homeTeam":  {
+                                         "shortName":  "Irán"
+                                     }
+                    },
+                    {
+                        "id":  19,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Argelia"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  3,
+                                                       "away":  0
+                                                   }
+                                  },
+                        "status":  "FINISHED",
+                        "homeTeam":  {
+                                         "shortName":  "Argentina"
+                                     }
+                    },
+                    {
+                        "id":  24,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Panamá"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Ghana"
+                                     }
+                    },
+                    {
+                        "id":  28,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Sudáfrica"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Chequia"
+                                     }
+                    },
+                    {
+                        "id":  48,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Ghana"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Inglaterra"
+                                     }
+                    },
+                    {
+                        "id":  55,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Costa de Marfil"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Curaçao"
+                                     }
+                    },
+                    {
+                        "id":  56,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Alemania"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Ecuador"
+                                     }
+                    },
+                    {
+                        "id":  68,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Ghana"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Croacia"
+                                     }
+                    },
+                    {
+                        "id":  69,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Austria"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Argelia"
+                                     }
+                    },
+                    {
+                        "id":  74,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "3ro Grupo A/B/C/D/F"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Ganador Grupo E"
+                                     }
+                    },
+                    {
+                        "id":  81,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "3ro Grupo B/E/F/I/J"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Ganador Grupo D"
+                                     }
+                    },
+                    {
+                        "id":  103,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Perdedor Partido 102"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Perdedor Partido 101"
+                                     }
+                    },
+                    {
+                        "id":  15,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Egipto"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  1,
+                                                       "away":  1
+                                                   }
+                                  },
+                        "status":  "FINISHED",
+                        "homeTeam":  {
+                                         "shortName":  "Bélgica"
+                                     }
+                    },
+                    {
+                        "id":  34,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Curaçao"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Ecuador"
+                                     }
+                    },
+                    {
+                        "id":  54,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Canadá"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Suiza"
+                                     }
+                    },
+                    {
+                        "id":  57,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Australia"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Paraguay"
+                                     }
+                    },
+                    {
+                        "id":  64,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Bélgica"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Nueva Zelanda"
+                                     }
+                    },
+                    {
+                        "id":  75,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Segundo Grupo C"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Ganador Grupo F"
+                                     }
+                    },
+                    {
+                        "id":  78,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Segundo Grupo I"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Segundo Grupo E"
+                                     }
+                    },
+                    {
+                        "id":  79,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "3ro Grupo C/E/F/H/I"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Ganador Grupo A"
+                                     }
+                    },
+                    {
+                        "id":  80,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "3ro Grupo E/H/I/J/K"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Ganador Grupo L"
+                                     }
+                    },
+                    {
+                        "id":  82,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "3ro Grupo A/E/H/I/J"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Ganador Grupo G"
+                                     }
+                    },
+                    {
+                        "id":  89,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Ganador Partido 77"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Ganador Partido 74"
+                                     }
+                    },
+                    {
+                        "id":  99,
+                        "minute":  null,
+                        "awayTeam":  {
+                                         "shortName":  "Ganador Partido 92"
+                                     },
+                        "score":  {
+                                      "fullTime":  {
+                                                       "home":  null,
+                                                       "away":  null
+                                                   }
+                                  },
+                        "status":  "SCHEDULED",
+                        "homeTeam":  {
+                                         "shortName":  "Ganador Partido 91"
+                                     }
+                    }
+                ]
 }
