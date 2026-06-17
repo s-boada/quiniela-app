@@ -331,20 +331,12 @@ function bindAuth() {
     const userRef = db.collection(COLLECTIONS.users).doc(firebaseUser.uid);
     const userSnap = await userRef.get();
     if (!userSnap.exists) {
-      const fallbackName = localStorage.getItem(LAST_DISPLAY_NAME_KEY) || firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "Participante";
-      await userRef.set({
-        uid: firebaseUser.uid,
-        email: firebaseUser.email || "",
-        displayName: fallbackName,
-        role: "user",
-        avatar: selectedAvatarEmoji,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-      }, { merge: true });
+      await auth.signOut();
+      localStorage.removeItem(SESSION_KEY);
+      alert("Tu cuenta no está habilitada en la quiniela. Si necesitas acceso, contacta al administrador.");
+      return;
     }
-
-    const refreshed = await userRef.get();
-    const userData = refreshed.data();
+    const userData = userSnap.data();
     state.currentUser = {
       uid: firebaseUser.uid,
       id: firebaseUser.uid,

@@ -10,6 +10,11 @@ service cloud.firestore {
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
     }
 
+    function isActiveUser() {
+      return isAuthenticated()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
     function isLegacyClaim() {
       return isAuthenticated()
         && resource.data.claimed != true
@@ -25,17 +30,17 @@ service cloud.firestore {
     }
 
     match /settings/{docId} {
-      allow read: if isAuthenticated();
+      allow read: if isActiveUser();
       allow write: if isAdmin();
     }
 
     match /matches/{matchId} {
-      allow read: if isAuthenticated();
+      allow read: if isActiveUser();
       allow write: if isAdmin();
     }
 
     match /users/{userId} {
-      allow read: if isAuthenticated();
+      allow read: if isActiveUser();
       allow create: if isAuthenticated() && request.auth.uid == userId;
       allow update: if isAuthenticated() && (
         request.auth.uid == userId ||
@@ -45,14 +50,14 @@ service cloud.firestore {
     }
 
     match /legacy_users/{userId} {
-      allow read: if isAuthenticated();
+      allow read: if isActiveUser();
       allow create, delete: if isAdmin();
       allow update: if isAdmin() || isLegacyClaim();
     }
 
     match /predictions/{predictionId} {
-      allow read: if isAuthenticated();
-      allow create, update: if isAuthenticated()
+      allow read: if isActiveUser();
+      allow create, update: if isActiveUser()
         && request.resource.data.uid == request.auth.uid;
       allow delete: if isAdmin();
     }
