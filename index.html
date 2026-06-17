@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audioplace Quiniela 2026 - Ranking General</title>
+  <meta name="description" content="Audioplace Quiniela 2026. Ingresa tus pronósticos y compite con amigos. Ranking privado con resultados en tiempo real.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="container header-content">
+      <div class="logo-container">
+        <img src="logo2026.png" alt="FIFA 2026" style="height: 48px; width: auto; object-fit: contain; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+        <div class="logo-text">
+          <h1>Audioplace Quiniela 2026</h1>
+          <p>Mundial Norteamérica</p>
+        </div>
+      </div>
+      
+      <div class="user-controls" style="display: flex; gap: 10px; align-items: center;">
+        <button class="btn btn-outline" style="border: none; background: transparent; color: var(--accent-blue); padding: 5px 10px;" onclick="syncLiveResults()" title="Sincronizar Resultados con Internet">
+          <span id="syncBtnText" style="font-size: 0.9rem; font-weight: 600;">Actualizar Datos</span>
+        </button>
+        <!-- Controles para usuario NO logueado -->
+        <div id="loggedOutControls" style="display: flex; gap: 10px; align-items: center;">
+          <div class="user-badge" onclick="openLoginModal()" style="cursor: pointer; background: rgba(2, 86, 214, 0.05); border: 1px solid rgba(2, 86, 214, 0.1); border-radius: 50px; padding: 6px 16px;">
+            <span class="user-name" style="font-weight: 600; font-size: 0.9rem;">Iniciar Sesión</span>
+          </div>
+        </div>
+        
+        <!-- Controles para usuario logueado -->
+        <div id="loggedInControls" style="display: none; gap: 10px; align-items: center;">
+          <div class="active-user-badge" id="userBadge" onclick="logoutUser()" title="Cerrar Sesión">
+            <span class="user-name" id="currentUserName">Usuario</span>
+            <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 5px;">(Salir)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Navegación por pestañas -->
+    <nav class="nav-tabs">
+      <button class="tab-link active" onclick="switchTab('leaderboard')">🏆 Ranking</button>
+      <button class="tab-link" onclick="switchTab('predictions')">✍️ Mis Pronósticos</button>
+      <button class="tab-link" id="groupStageTabLink" onclick="switchTab('groupStage')" style="display: none;">📊 Grupos y Fixture</button>
+      <button class="tab-link" onclick="switchTab('rules')">📋 Reglas</button>
+      <button class="tab-link" id="premiosTabLink" onclick="switchTab('premios')">🎁 Premios</button>
+    </nav>
+
+    <!-- PESTAÑA: Leaderboard -->
+    <section id="leaderboard" class="tab-content active">
+      <div class="leaderboard-container">
+        <div class="leaderboard-header">
+          <h2>Ranking General</h2>
+          <span class="filter-label" id="userCountLabel">8 Participantes</span>
+        </div>
+        <div class="leaderboard-list" id="leaderboardList">
+          <!-- Dinámico en JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- PESTAÑA: Mis Pronósticos -->
+    <section id="predictions" class="tab-content">
+      <!-- Filtros -->
+      <div class="filters-bar">
+        <div class="filter-group">
+          <div>
+            <label class="filter-label">Fase</label>
+            <select class="input-select" id="stageFilter" onchange="filterMatches()">
+              <option value="All">Todas las Fases</option>
+              <option value="Fase de Grupos">Fase de Grupos</option>
+              <option value="Dieciseisavos de Final">Dieciseisavos</option>
+            </select>
+          </div>
+          <div>
+            <label class="filter-label">Grupo</label>
+            <select class="input-select" id="groupFilter" onchange="filterMatches()">
+              <option value="All">Todos los Grupos</option>
+              <option value="A">Grupo A</option>
+              <option value="B">Grupo B</option>
+              <option value="C">Grupo C</option>
+              <option value="D">Grupo D</option>
+              <option value="E">Grupo E</option>
+              <option value="F">Grupo F</option>
+              <option value="G">Grupo G</option>
+              <option value="H">Grupo H</option>
+              <option value="I">Grupo I</option>
+              <option value="J">Grupo J</option>
+              <option value="K">Grupo K</option>
+              <option value="L">Grupo L</option>
+              <option value="Eliminatorias">Eliminatorias</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="filter-group" id="predictionFilterButtons">
+          <button class="btn-filter active" onclick="setPredictionStatusFilter('All', this)">Todos</button>
+          <button class="btn-filter" onclick="setPredictionStatusFilter('Pending', this)">Pendientes</button>
+          <button class="btn-filter" onclick="setPredictionStatusFilter('Completed', this)">Jugados</button>
+        </div>
+      </div>
+
+      <!-- Grid de partidos -->
+      <div class="matches-grid" id="predictionsGrid">
+        <!-- Dinámico en JS -->
+      </div>
+    </section>
+
+    <!-- PESTAÑA: Fase de Grupos -->
+    <section id="groupStage" class="tab-content">
+      <!-- Filtros/Selector de Grupo -->
+      <div class="filters-bar" style="margin-bottom: 25px;">
+        <div class="filter-group">
+          <div>
+            <label class="filter-label">Grupo</label>
+            <select class="input-select" id="groupStageSelector" onchange="renderGroupStageTab()">
+              <option value="A">Grupo A</option>
+              <option value="B">Grupo B</option>
+              <option value="C">Grupo C</option>
+              <option value="D">Grupo D</option>
+              <option value="E">Grupo E</option>
+              <option value="F">Grupo F</option>
+              <option value="G">Grupo G</option>
+              <option value="H">Grupo H</option>
+              <option value="I">Grupo I</option>
+              <option value="J">Grupo J</option>
+              <option value="K">Grupo K</option>
+              <option value="L">Grupo L</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid de Posiciones y Partidos -->
+      <div class="group-stage-grid">
+        <!-- Tabla de Posiciones -->
+        <div class="standings-card">
+          <div class="card-header" style="margin-bottom: 15px;">
+            <h3>Tabla de Posiciones</h3>
+          </div>
+          <div class="table-responsive" style="overflow-x: auto;">
+            <table class="standings-table" style="width: 100%; border-collapse: collapse; text-align: left;">
+              <thead>
+                <tr style="border-bottom: 2px solid var(--border-color);">
+                  <th style="width: 50px; padding: 10px 5px;">Pos</th>
+                  <th style="padding: 10px 5px;">Equipo</th>
+                  <th style="width: 40px; text-align: center; padding: 10px 5px;" title="Partidos Jugados">PJ</th>
+                  <th style="width: 40px; text-align: center; padding: 10px 5px;" title="Victorias">PG</th>
+                  <th style="width: 40px; text-align: center; padding: 10px 5px;" title="Empates">PE</th>
+                  <th style="width: 40px; text-align: center; padding: 10px 5px;" title="Derrotas">PP</th>
+                  <th style="width: 40px; text-align: center; padding: 10px 5px;" title="Goles a Favor">GF</th>
+                  <th style="width: 40px; text-align: center; padding: 10px 5px;" title="Goles en Contra">GC</th>
+                  <th style="width: 40px; text-align: center; padding: 10px 5px;" title="Diferencia de Goles">DG</th>
+                  <th style="width: 50px; text-align: center; padding: 10px 5px; font-weight: 700; color: var(--accent-soccer);" title="Puntos">PTS</th>
+                </tr>
+              </thead>
+              <tbody id="groupStandingsBody">
+                <!-- Dinámico en JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Partidos del Grupo -->
+        <div class="group-matches-card">
+          <div class="card-header" style="margin-bottom: 15px;">
+            <h3>Partidos del Grupo</h3>
+          </div>
+          <div class="group-matches-list" id="groupMatchesList" style="display: flex; flex-direction: column; gap: 12px;">
+            <!-- Dinámico en JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PESTAÑA: Premios -->
+    <section id="premios" class="tab-content">
+      <div class="premios-container" style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 30px; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04); max-width: 800px; margin: 0 auto;">
+        <h2 style="font-weight: 800; font-size: 1.8rem; text-align: center; margin-bottom: 10px;">Premios de la Quiniela</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 30px; text-align: center; font-size: 1rem;">Compite por los primeros lugares del ranking y llévate increíbles premios al finalizar el torneo.</p>
+        
+        <div class="prize-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+          <!-- 1er Lugar -->
+          <div class="prize-card gold" style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.05) 0%, rgba(251, 191, 36, 0.1) 100%); border: 1px solid var(--accent-gold); border-radius: var(--radius-md); padding: 25px; text-align: center; transition: var(--transition);">
+            <div class="prize-badge" style="font-size: 1.2rem; font-weight: 800; color: var(--accent-gold); margin-bottom: 10px;">🏆 1er Lugar</div>
+            <div class="prize-value" style="font-size: 2.5rem; font-weight: 800; color: var(--text-primary); margin-bottom: 5px;">100$</div>
+            <div class="prize-label" style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 500;">Premio en Efectivo</div>
+          </div>
+          <!-- 2do Lugar -->
+          <div class="prize-card silver" style="background: linear-gradient(135deg, rgba(148, 163, 184, 0.05) 0%, rgba(148, 163, 184, 0.1) 100%); border: 1px solid var(--accent-silver); border-radius: var(--radius-md); padding: 25px; text-align: center; transition: var(--transition);">
+            <div class="prize-badge" style="font-size: 1.2rem; font-weight: 800; color: var(--accent-silver); margin-bottom: 10px;">🥈 2do Lugar</div>
+            <div class="prize-value" style="font-size: 2.5rem; font-weight: 800; color: var(--text-primary); margin-bottom: 5px;">50$</div>
+            <div class="prize-label" style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 500;">Premio en Efectivo</div>
+          </div>
+          <!-- 3er Lugar -->
+          <div class="prize-card bronze" style="background: linear-gradient(135deg, rgba(180, 83, 9, 0.05) 0%, rgba(180, 83, 9, 0.1) 100%); border: 1px solid var(--accent-bronze); border-radius: var(--radius-md); padding: 25px; text-align: center; transition: var(--transition);">
+            <div class="prize-badge" style="font-size: 1.2rem; font-weight: 800; color: var(--accent-bronze); margin-bottom: 10px;">🥉 3er Lugar</div>
+            <div class="prize-value" style="font-size: 2.5rem; font-weight: 800; color: var(--text-primary); margin-bottom: 5px;">20$</div>
+            <div class="prize-label" style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 500;">Premio en Efectivo</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PESTAÑA: Reglas -->
+    <section id="rules" class="tab-content">
+      <div class="rules-container">
+        <h2>Sistema de Puntuación - Audioplace Quiniela 2026</h2>
+        
+        <div class="rules-grid">
+          <!-- Regla 4 Puntos -->
+          <div class="rule-card">
+            <span class="rule-points-badge">4 PTS</span>
+            <h3>Marcador Exacto</h3>
+            <p>Le atinas al ganador del partido (o empate) y al número exacto de goles de cada equipo.</p>
+            <p style="margin-top: 8px; font-size: 0.8rem; color: var(--accent-soccer)">Ej: Predicción 2-1 | Real 2-1</p>
+          </div>
+
+          <!-- Regla 1 Punto -->
+          <div class="rule-card">
+            <span class="rule-points-badge secondary">1 PT</span>
+            <h3>Acierto de Ganador / Empate</h3>
+            <p>Le atinas a la tendencia final (quién gana o si es empate) pero con un marcador de goles diferente.</p>
+            <p style="margin-top: 8px; font-size: 0.8rem; color: var(--accent-blue)">Ej: Predicción 1-0 | Real 3-1</p>
+          </div>
+
+          <!-- Regla 0 Puntos -->
+          <div class="rule-card">
+            <span class="rule-points-badge zero">0 PTS</span>
+            <h3>Sin Acierto</h3>
+            <p>No aciertas al equipo ganador ni al empate del partido.</p>
+            <p style="margin-top: 8px; font-size: 0.8rem; color: var(--accent-red)">Ej: Predicción 1-1 | Real 0-2</p>
+          </div>
+        </div>
+
+        <!-- Privacidad -->
+        <div class="privacy-notice">
+          <div class="privacy-notice-icon">🔒</div>
+          <div>
+            <h4>Privacidad de Pronósticos Activada</h4>
+            <p>
+              Para mantener el juego limpio y emocionante, <strong>los usuarios pueden ver los puntajes acumulados de todos</strong>, 
+              pero <strong>no pueden ver los goles o predicciones específicas de los demás participantes</strong>. 
+              Los marcadores pronosticados se revelan únicamente para los partidos que ya están finalizados (cuyos resultados reales ya han sido registrados por el Administrador).
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL: LOGIN -->
+  <div class="modal-overlay" id="loginModal">
+    <div class="modal-content" style="max-width: 400px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Iniciar Sesión</h3>
+        <button class="modal-close" onclick="closeModal('loginModal')">✕</button>
+      </div>
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: 15px;">
+        <p style="color: var(--text-light); font-size: 0.95rem;">Ingresa tu usuario y tu código privado para acceder a tus pronósticos.</p>
+        
+        <div>
+          <label class="filter-label">Usuario</label>
+          <input type="text" id="loginUsername" class="input-select" placeholder="Ej: Ángel" autocomplete="off">
+        </div>
+        
+        <div>
+          <label class="filter-label">PIN (Código Privado)</label>
+          <input type="password" id="loginPin" class="input-select" placeholder="Ej: 1234" readonly style="background: var(--bg-primary);">
+        </div>
+        
+        <!-- Tablero Numérico Premium -->
+        <div class="pinpad-container" style="margin-top: 5px; margin-bottom: 5px;">
+          <div class="pinpad-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+            <button type="button" class="pinpad-btn" onclick="pressPinKey('1')">1</button>
+            <button type="button" class="pinpad-btn" onclick="pressPinKey('2')">2</button>
+            <button type="button" class="pinpad-btn" onclick="pressPinKey('3')">3</button>
+            <button type="button" class="pinpad-btn" onclick="pressPinKey('4')">4</button>
+            <button type="button" class="pinpad-btn" onclick="pressPinKey('5')">5</button>
+            <button type="button" class="pinpad-btn" onclick="pressPinKey('6')">6</button>
+            <button type="button" class="pinpad-btn" onclick="pressPinKey('7')">7</button>
+            <button type="button" class="pinpad-btn" onclick="pressPinKey('8')">8</button>
+            <button type="button" class="pinpad-btn" onclick="pressPinKey('9')">9</button>
+            <button type="button" class="pinpad-btn action" onclick="pressPinKey('clear')" style="color: var(--accent-red); font-weight: 700;">C</button>
+            <button type="button" class="pinpad-btn" onclick="pressPinKey('0')">0</button>
+            <button type="button" class="pinpad-btn action" onclick="pressPinKey('backspace')">⌫</button>
+          </div>
+        </div>
+        
+        <button class="btn-primary" onclick="loginUser()" style="width: 100%; padding: 12px; margin-top: 10px;">Ingresar</button>
+        
+        <div style="text-align: center; margin-top: 15px;">
+          <a href="#" onclick="openRegisterUserFromLogin()" style="color: var(--accent-soccer); text-decoration: none; font-weight: 500;">¿Eres nuevo? Crea tu usuario aquí</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: REGISTRO DE USUARIO -->
+  <div class="modal-overlay" id="registerUserModal">
+    <div class="modal-content" style="max-width: 400px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Nuevo Usuario</h3>
+        <button class="modal-close" onclick="closeModal('registerUserModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="color: var(--text-light); margin-bottom: 20px; font-size: 0.95rem;">Si tu nombre ya estaba en el ranking, escríbelo igual y establece tu propio código privado.</p>
+        
+        <div style="margin-bottom: 20px;">
+          <label class="filter-label">Nombre (Público)</label>
+          <input type="text" id="newUsername" class="input-select" placeholder="Tu nombre" autocomplete="off">
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <label class="filter-label">PIN Privado (Solo tú lo sabrás)</label>
+          <input type="text" id="newUserPin" class="input-select" placeholder="Elige un PIN o código secreto" autocomplete="off">
+        </div>
+      </div>
+      <div class="form-group" style="display: none;">
+        <label>Elige tu Avatar Emoji</label>
+        <div class="avatar-grid">
+          <div class="avatar-option selected" onclick="selectAvatar('⚽', this)">⚽</div>
+          <div class="avatar-option" onclick="selectAvatar('🏆', this)">🏆</div>
+          <div class="avatar-option" onclick="selectAvatar('🌟', this)">🌟</div>
+          <div class="avatar-option" onclick="selectAvatar('🔥', this)">🔥</div>
+          <div class="avatar-option" onclick="selectAvatar('🦖', this)">🦖</div>
+          <div class="avatar-option" onclick="selectAvatar('🦁', this)">🦁</div>
+          <div class="avatar-option" onclick="selectAvatar('🌮', this)">🌮</div>
+          <div class="avatar-option" onclick="selectAvatar('⚡', this)">⚡</div>
+          <div class="avatar-option" onclick="selectAvatar('😎', this)">😎</div>
+          <div class="avatar-option" onclick="selectAvatar('🎮', this)">🎮</div>
+        </div>
+      </div>
+      <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
+        <button class="btn btn-outline" onclick="closeModal('registerUserModal')">Cancelar</button>
+        <button class="btn btn-primary" onclick="registerUser()">Registrar e Ingresar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Detalle de Usuario (Leaderboard Breakdown) -->
+  <div class="modal-overlay" id="userStatsModal">
+    <div class="modal-content" style="max-width: 600px;">
+      <div class="modal-header">
+        <h3 id="statsModalTitle">Pronósticos de Sofía</h3>
+        <button class="modal-close" onclick="closeModal('userStatsModal')">&times;</button>
+      </div>
+      <div class="stats-summary">
+        <div class="stat-box">
+          <div class="stat-value" id="statExactMatches">0</div>
+          <div class="stat-label">Aciertos Exactos</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value blue" id="statOutcomeMatches">0</div>
+          <div class="stat-label">Aciertos Ganador</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value" style="color: var(--text-muted);" id="statTotalMatches">0</div>
+          <div class="stat-label">Total Pronósticos</div>
+        </div>
+      </div>
+      
+      <div style="margin-bottom: 12px; font-size: 0.85rem; color: var(--accent-blue); display: flex; align-items: center; gap: 6px;">
+        <span>🔒 Los partidos en curso o futuros no revelan goles para proteger la privacidad.</span>
+      </div>
+      
+      <div class="stats-match-list" id="statsMatchList">
+        <!-- Dinámico en JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Agregar Partido (Admin) -->
+  <div class="modal-overlay" id="addMatchModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Agregar Nuevo Partido</h3>
+        <button class="modal-close" onclick="closeModal('addMatchModal')">&times;</button>
+      </div>
+      <div class="form-group">
+        <label for="newMatchHome">Equipo Local</label>
+        <select class="input-select" id="newMatchHome" style="width: 100%;"></select>
+      </div>
+      <div class="form-group">
+        <label for="newMatchAway">Equipo Visitante</label>
+        <select class="input-select" id="newMatchAway" style="width: 100%;"></select>
+      </div>
+      <div class="form-group">
+        <label for="newMatchStage">Fase del Torneo</label>
+        <select class="input-select" id="newMatchStage" style="width: 100%;">
+          <option value="Fase de Grupos">Fase de Grupos</option>
+          <option value="Dieciseisavos de Final">Dieciseisavos de Final</option>
+          <option value="Octavos de Final">Octavos de Final</option>
+          <option value="Cuartos de Final">Cuartos de Final</option>
+          <option value="Semifinal">Semifinal</option>
+          <option value="Tercer Puesto">Tercer Puesto</option>
+          <option value="Final">Final</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="newMatchGroup">Grupo / Categoría</label>
+        <select class="input-select" id="newMatchGroup" style="width: 100%;">
+          <option value="A">Grupo A</option>
+          <option value="B">Grupo B</option>
+          <option value="C">Grupo C</option>
+          <option value="D">Grupo D</option>
+          <option value="E">Grupo E</option>
+          <option value="F">Grupo F</option>
+          <option value="G">Grupo G</option>
+          <option value="H">Grupo H</option>
+          <option value="I">Grupo I</option>
+          <option value="J">Grupo J</option>
+          <option value="K">Grupo K</option>
+          <option value="L">Grupo L</option>
+          <option value="Eliminatorias">Eliminatorias</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="newMatchDate">Fecha y Hora</label>
+        <input type="datetime-local" id="newMatchDate" class="input-text" value="2026-06-17T18:00">
+      </div>
+      <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
+        <button class="btn btn-outline" onclick="closeModal('addMatchModal')">Cancelar</button>
+        <button class="btn btn-primary" onclick="addNewMatch()">Agregar Partido</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
