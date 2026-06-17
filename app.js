@@ -185,6 +185,8 @@ async function seedInitialDataIfNeeded() {
     const ref = db.collection(COLLECTIONS.legacyUsers).doc(legacyUser.id);
     batch.set(ref, {
       ...legacyUser,
+      claimed: false,
+      status: "available",
       role: "user",
       seededAt: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
@@ -212,6 +214,81 @@ async function seedInitialDataIfNeeded() {
   }, { merge: true });
 
   await batch.commit();
+}
+
+async function claimLegacyByName(displayName, uid) {
+  const targetName = normalizeName(displayName);
+  if (!targetName) return null;
+
+  const legacyUsersSnap = await db.collection(COLLECTIONS.legacyUsers).get();
+  let matchedLegacyUser = null;
+  let matchedLegacyRef = null;
+
+  legacyUsersSnap.forEach((doc) => {
+    if (matchedLegacyUser) return;
+    const data = doc.data();
+    const legacyName = normalizeName(data.name || "");
+    const alreadyClaimed = data.claimed === true;
+    if (legacyName === targetName && !alreadyClaimed) {
+      matchedLegacyUser = { id: doc.id, ...data };
+      matchedLegacyRef = doc.ref;
+    }
+  });
+
+  if (!matchedLegacyUser) return null;
+
+  await db.runTransaction(async (tx) => {
+    const legacyDoc = await tx.get(matchedLegacyRef);
+    if (!legacyDoc.exists) {
+      throw new Error("Legacy user no encontrado.");
+    }
+    const legacyData = legacyDoc.data();
+    if (legacyData.claimed === true) {
+      throw new Error("Este usuario legacy ya fue reclamado.");
+    }
+    tx.set(matchedLegacyRef, {
+      claimed: true,
+      status: "claimed",
+      claimedBy: uid,
+      claimedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+  });
+
+  const legacyUid = `legacy_${matchedLegacyUser.id}`;
+  const [legacyByField, legacyByUid] = await Promise.all([
+    db.collection(COLLECTIONS.predictions).where("legacyUserId", "==", matchedLegacyUser.id).get(),
+    db.collection(COLLECTIONS.predictions).where("uid", "==", legacyUid).get()
+  ]);
+
+  const predictionsByMatchId = new Map();
+  [legacyByField, legacyByUid].forEach((snap) => {
+    snap.forEach((doc) => {
+      const data = doc.data();
+      if (!data.matchId) return;
+      if (!predictionsByMatchId.has(data.matchId)) {
+        predictionsByMatchId.set(data.matchId, data);
+      }
+    });
+  });
+
+  const batch = db.batch();
+  predictionsByMatchId.forEach((prediction, matchId) => {
+    const ref = db.collection(COLLECTIONS.predictions).doc(`${uid}_${matchId}`);
+    batch.set(ref, {
+      uid,
+      matchId,
+      homeScore: prediction.homeScore,
+      awayScore: prediction.awayScore,
+      migratedFromLegacy: matchedLegacyUser.id,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+  });
+
+  if (predictionsByMatchId.size > 0) {
+    await batch.commit();
+  }
+
+  return matchedLegacyUser;
 }
 
 function bindRealtimeCollections() {
@@ -557,18 +634,22 @@ window.registerUser = async () => {
 
   try {
     const cred = await auth.createUserWithEmailAndPassword(email, password);
-    await cred.user.updateProfile({ displayName: name });
+    const matchedLegacyUser = await claimLegacyByName(name, cred.user.uid);
+    const finalDisplayName = matchedLegacyUser?.name || name;
+    const finalAvatar = matchedLegacyUser?.avatar || selectedAvatarEmoji;
+
+    await cred.user.updateProfile({ displayName: finalDisplayName });
     await db.collection(COLLECTIONS.users).doc(cred.user.uid).set({
       uid: cred.user.uid,
       email,
-      displayName: name,
+      displayName: finalDisplayName,
       role: "user",
-      avatar: selectedAvatarEmoji,
+      avatar: finalAvatar,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
     localStorage.setItem(LAST_EMAIL_KEY, email);
-    localStorage.setItem(LAST_DISPLAY_NAME_KEY, name);
+    localStorage.setItem(LAST_DISPLAY_NAME_KEY, finalDisplayName);
     closeModal("registerUserModal");
     switchTab("predictions");
   } catch (error) {

@@ -10,6 +10,20 @@ service cloud.firestore {
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
     }
 
+    function isLegacyClaim() {
+      return isAuthenticated()
+        && resource.data.claimed != true
+        && request.resource.data.claimed == true
+        && request.resource.data.status == "claimed"
+        && request.resource.data.claimedBy == request.auth.uid
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+          "claimed",
+          "status",
+          "claimedBy",
+          "claimedAt"
+        ]);
+    }
+
     match /settings/{docId} {
       allow read: if isAuthenticated();
       allow write: if isAdmin();
@@ -32,7 +46,8 @@ service cloud.firestore {
 
     match /legacy_users/{userId} {
       allow read: if isAuthenticated();
-      allow write: if isAdmin();
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin() || isLegacyClaim();
     }
 
     match /predictions/{predictionId} {
