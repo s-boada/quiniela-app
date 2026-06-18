@@ -5,7 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Audioplace Quiniela 2026 - Ranking General</title>
   <meta name="description" content="Audioplace Quiniela 2026. Ingresa tus pronósticos y compite con amigos. Ranking privado con resultados en tiempo real.">
+  <meta name="theme-color" content="#0256d6">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Quiniela">
   <link rel="icon" type="image/png" href="logo2026.png">
+  <link rel="apple-touch-icon" href="logo2026.png">
+  <link rel="manifest" href="manifest.webmanifest">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -23,6 +30,16 @@
       </div>
       
       <div class="user-controls" style="display: flex; gap: 10px; align-items: center;">
+        <button
+          id="pwaInstallBtn"
+          type="button"
+          class="btn btn-outline"
+          style="display: none; border-color: var(--accent-soccer); color: var(--accent-soccer); padding: 5px 12px; font-size: 0.85rem; font-weight: 600; align-items: center; gap: 6px;"
+          onclick="installQuinielaApp()"
+          title="Instalar app en tu dispositivo"
+        >
+          📲 Instalar
+        </button>
         <button class="btn btn-outline" style="border: none; background: transparent; color: var(--accent-blue); padding: 5px 10px;" onclick="syncLiveResults()" title="Sincronizar Resultados con Internet">
           <span id="syncBtnText" style="font-size: 0.9rem; font-weight: 600;">Actualizar Datos</span>
         </button>
@@ -419,6 +436,7 @@
     </div>
   </div>
 
+  <script src="pwa.js?v=1"></script>
   <script src="api-client.js?v=1"></script>
   <script src="data.js?v=8"></script>
   <script src="app.js?v=8"></script>
