@@ -19,6 +19,8 @@ let state = {
 
 let pollingTimer = null;
 
+const PREDICTION_LOCK_MS = 5 * 60 * 1000;
+
 const COUNTRY_CODES = {
   "Argelia": "dz",
   "Argentina": "ar",
@@ -381,7 +383,7 @@ function renderPredictions() {
     const hasPrediction = prediction.homeScore !== "" && prediction.awayScore !== "";
     const isLive = match.status === "IN_PLAY";
     const matchDateUTC = parseMatchDateAsUTC(match.date);
-    const isLockedByTime = matchDateUTC.getTime() - Date.now() < 5 * 60 * 1000;
+    const isLockedByTime = matchDateUTC.getTime() - Date.now() < PREDICTION_LOCK_MS;
     const disabledAttr = (match.completed || isLive || hasPrediction || isLockedByTime || isMatchUndetermined(match)) ? "disabled" : "";
 
     const matchPoints = calculateMatchPoints(match, prediction);
@@ -505,7 +507,7 @@ window.confirmAndSavePrediction = async (matchId) => {
   if (!match) return;
   if (isMatchUndetermined(match)) return alert("No puedes pronosticar este partido hasta que se definan los equipos.");
   const matchDateUTC = parseMatchDateAsUTC(match.date);
-  if (matchDateUTC.getTime() - Date.now() < 60 * 60 * 1000) return alert("El tiempo límite para guardar este pronóstico ha expirado.");
+  if (matchDateUTC.getTime() - Date.now() < PREDICTION_LOCK_MS) return alert("El tiempo límite para guardar este pronóstico ha expirado (5 minutos antes del inicio).");
   const homeVal = document.getElementById(`home_${matchId}`).value.trim();
   const awayVal = document.getElementById(`away_${matchId}`).value.trim();
   if (homeVal === "" || awayVal === "") return alert("Ingresa ambos marcadores.");
