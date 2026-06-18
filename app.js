@@ -381,7 +381,7 @@ function renderPredictions() {
     const hasPrediction = prediction.homeScore !== "" && prediction.awayScore !== "";
     const isLive = match.status === "IN_PLAY";
     const matchDateUTC = parseMatchDateAsUTC(match.date);
-    const isLockedByTime = matchDateUTC.getTime() - Date.now() < 60 * 60 * 1000;
+    const isLockedByTime = matchDateUTC.getTime() - Date.now() < 5 * 60 * 1000;
     const disabledAttr = (match.completed || isLive || hasPrediction || isLockedByTime || isMatchUndetermined(match)) ? "disabled" : "";
 
     const matchPoints = calculateMatchPoints(match, prediction);
