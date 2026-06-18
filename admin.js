@@ -100,8 +100,10 @@ function renderMatchesSection() {
   filtered.forEach((m) => {
     const home = m.realHomeScore != null ? m.realHomeScore : "";
     const away = m.realAwayScore != null ? m.realAwayScore : "";
+    const isCompleted = !!m.completed;
+    const disabledAttr = isCompleted ? "disabled" : "";
     html += `
-      <div class="match-card">
+      <div class="match-card ${isCompleted ? "is-completed" : ""}">
         <div class="match-header">
           <span class="match-stage">${m.stage || ""}</span>
           <span>${m.date || ""}</span>
@@ -109,15 +111,17 @@ function renderMatchesSection() {
         <div class="match-teams-score">
           <div class="team-row">
             <div class="team-info">${getCountryFlag(m.homeTeam)}<span>${m.homeTeam}</span></div>
-            <input type="number" class="score-input" id="h_${m.id}" value="${home}" min="0">
+            <input type="number" class="score-input" id="h_${m.id}" value="${home}" min="0" ${disabledAttr}>
           </div>
           <div class="team-row">
             <div class="team-info">${getCountryFlag(m.awayTeam)}<span>${m.awayTeam}</span></div>
-            <input type="number" class="score-input" id="a_${m.id}" value="${away}" min="0">
+            <input type="number" class="score-input" id="a_${m.id}" value="${away}" min="0" ${disabledAttr}>
           </div>
         </div>
         <div class="card-footer">
-          <button class="btn btn-primary" onclick="saveMatchScore('${m.id}')">Guardar</button>
+          ${isCompleted
+            ? `<span class="prediction-status status-saved">✓ Resultado guardado (${m.realHomeScore} - ${m.realAwayScore})</span>`
+            : `<button class="btn btn-primary" onclick="saveMatchScore('${m.id}')">Guardar</button>`}
         </div>
       </div>
     `;
@@ -205,6 +209,11 @@ function renderAdminPanel() {
 window.saveMatchScore = async (matchId) => {
   if (!currentUser || currentUser.role !== "admin") {
     alert("No autorizado.");
+    return;
+  }
+  const match = matches.find((m) => m.id === matchId);
+  if (match?.completed) {
+    alert("Este partido ya tiene resultado guardado y no puede editarse.");
     return;
   }
   const homeEl = document.getElementById(`h_${matchId}`);
