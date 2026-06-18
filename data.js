@@ -114,10 +114,12 @@ const INITIAL_MATCHES = [
 // Usuarios Iniciales del Tablero (sin PIN para que se registren ellos mismos)
 const INITIAL_USERS = [
   { id: "angel", name: "Ángel Borjas", pin: null, avatar: "🦁" },
-  { id: "jairo", name: "Jairo Gutiérrez", pin: null, avatar: "🏆" },
+
   { id: "jesus", name: "Jesús Sánchez", pin: null, avatar: "🔥" },
+
   { id: "anabell", name: "Anabell Peña", pin: null, avatar: "🌟" },
   { id: "luis", name: "Luis Rivas", pin: null, avatar: "🦖" },
+
   { id: "nicolas", name: "Nicolás Peña", pin: null, avatar: "⚡" },
   { id: "yein", name: "Yein Azócar", pin: null, avatar: "😎" },
   { id: "jonathan", name: "Jonathan Calderón", pin: null, avatar: "⚽" }
@@ -127,7 +129,7 @@ const INITIAL_USERS = [
 const INITIAL_PREDICTIONS = {
   // Partido 1: México vs Sudáfrica
   "angel_m1": { homeScore: 1, awayScore: 1 },
-  "jairo_m1": { homeScore: 2, awayScore: 1 },
+
   "jesus_m1": { homeScore: 2, awayScore: 0 },
   "anabell_m1": { homeScore: 2, awayScore: 0 },
   "luis_m1": { homeScore: 2, awayScore: 0 },
@@ -136,7 +138,7 @@ const INITIAL_PREDICTIONS = {
 
   // Partido 2: Corea del Sur vs Chequia
   "angel_m2": { homeScore: 1, awayScore: 0 },
-  "jairo_m2": { homeScore: 1, awayScore: 0 },
+
   "jesus_m2": { homeScore: 0, awayScore: 3 },
   // anabell_m2 no tiene pronóstico
   "luis_m2": { homeScore: 1, awayScore: 0 },
@@ -145,7 +147,7 @@ const INITIAL_PREDICTIONS = {
 
   // Partido 3: Canadá vs Bosnia y Herzegovina
   "angel_m3": { homeScore: 1, awayScore: 0 },
-  "jairo_m3": { homeScore: 2, awayScore: 0 },
+
   "jesus_m3": { homeScore: 0, awayScore: 2 },
   "anabell_m3": { homeScore: 1, awayScore: 0 },
   "luis_m3": { homeScore: 1, awayScore: 1 },
@@ -154,7 +156,7 @@ const INITIAL_PREDICTIONS = {
 
   // Partido 4: EE.UU. vs Paraguay
   "angel_m4": { homeScore: 1, awayScore: 2 },
-  "jairo_m4": { homeScore: 2, awayScore: 1 },
+
   "jesus_m4": { homeScore: 2, awayScore: 0 },
   "anabell_m4": { homeScore: 2, awayScore: 1 },
   "luis_m4": { homeScore: 1, awayScore: 2 },
@@ -163,7 +165,7 @@ const INITIAL_PREDICTIONS = {
 
   // Partido 5: Catar vs Suiza
   "angel_m5": { homeScore: 1, awayScore: 2 },
-  "jairo_m5": { homeScore: 0, awayScore: 2 },
+
   "jesus_m5": { homeScore: 0, awayScore: 1 },
   "anabell_m5": { homeScore: 0, awayScore: 2 },
   "luis_m5": { homeScore: 0, awayScore: 2 },
@@ -172,7 +174,7 @@ const INITIAL_PREDICTIONS = {
 
   // Partido 6: Brasil vs Marruecos
   "angel_m6": { homeScore: 3, awayScore: 1 },
-  "jairo_m6": { homeScore: 3, awayScore: 2 },
+
   "jesus_m6": { homeScore: 2, awayScore: 0 },
   "anabell_m6": { homeScore: 3, awayScore: 1 },
   "luis_m6": { homeScore: 2, awayScore: 2 },
@@ -181,7 +183,7 @@ const INITIAL_PREDICTIONS = {
 
   // Partido 7: Haití vs Escocia
   "angel_m7": { homeScore: 0, awayScore: 2 },
-  "jairo_m7": { homeScore: 0, awayScore: 2 },
+
   "jesus_m7": { homeScore: 0, awayScore: 3 },
   "anabell_m7": { homeScore: 1, awayScore: 1 },
   "luis_m7": { homeScore: 0, awayScore: 2 },
@@ -190,7 +192,7 @@ const INITIAL_PREDICTIONS = {
 
   // Partido 8: Australia vs Turquía
   "angel_m8": { homeScore: 0, awayScore: 2 },
-  "jairo_m8": { homeScore: 1, awayScore: 2 },
+
   "jesus_m8": { homeScore: 1, awayScore: 1 },
   "anabell_m8": { homeScore: 1, awayScore: 2 },
   "luis_m8": { homeScore: 1, awayScore: 2 },
@@ -199,7 +201,7 @@ const INITIAL_PREDICTIONS = {
 
   // Partido 9: Alemania vs Curazao
   "angel_m9": { homeScore: 3, awayScore: 0 },
-  "jairo_m9": { homeScore: 3, awayScore: 0 },
+
   "jesus_m9": { homeScore: 5, awayScore: 0 },
   "anabell_m9": { homeScore: 3, awayScore: 1 },
   "luis_m9": { homeScore: 3, awayScore: 0 },
@@ -208,7 +210,7 @@ const INITIAL_PREDICTIONS = {
 
   // Partido 10: Países Bajos vs Japón
   "angel_m10": { homeScore: 1, awayScore: 2 },
-  "jairo_m10": { homeScore: 2, awayScore: 2 },
+
   "jesus_m10": { homeScore: 3, awayScore: 0 },
   "anabell_m10": { homeScore: 1, awayScore: 1 },
   "luis_m10": { homeScore: 2, awayScore: 1 },
@@ -217,7 +219,7 @@ const INITIAL_PREDICTIONS = {
 
   // Partido 11: Costa de Marfil vs Ecuador
   "angel_m11": { homeScore: 1, awayScore: 1 },
-  "jairo_m11": { homeScore: 1, awayScore: 2 },
+
   "jesus_m11": { homeScore: 0, awayScore: 2 },
   "anabell_m11": { homeScore: 1, awayScore: 1 },
   "luis_m11": { homeScore: 1, awayScore: 1 },
@@ -226,7 +228,7 @@ const INITIAL_PREDICTIONS = {
 
   // Partido 12: Suecia vs Túnez
   "angel_m12": { homeScore: 1, awayScore: 0 },
-  "jairo_m12": { homeScore: 2, awayScore: 0 },
+
   "jesus_m12": { homeScore: 2, awayScore: 0 },
   "anabell_m12": { homeScore: 2, awayScore: 1 },
   "luis_m12": { homeScore: 1, awayScore: 0 },
@@ -235,7 +237,7 @@ const INITIAL_PREDICTIONS = {
 
   // Partido 13: España vs Cabo Verde
   "angel_m13": { homeScore: 4, awayScore: 0 },
-  "jairo_m13": { homeScore: 3, awayScore: 1 },
+
   "jesus_m13": { homeScore: 5, awayScore: 0 },
   "anabell_m13": { homeScore: 3, awayScore: 0 },
   "luis_m13": { homeScore: 3, awayScore: 0 },
@@ -244,7 +246,7 @@ const INITIAL_PREDICTIONS = {
 
   // Partido 14: Bélgica vs Egipto
   "angel_m14": { homeScore: 2, awayScore: 1 },
-  "jairo_m14": { homeScore: 2, awayScore: 0 },
+
   "jesus_m14": { homeScore: 3, awayScore: 0 },
   "anabell_m14": { homeScore: 2, awayScore: 0 },
   "luis_m14": { homeScore: 2, awayScore: 0 },
@@ -254,7 +256,7 @@ const INITIAL_PREDICTIONS = {
 
   // Partido 15: Arabia Saudita vs Uruguay
   "angel_m15": { homeScore: 0, awayScore: 2 },
-  "jairo_m15": { homeScore: 1, awayScore: 2 },
+
   "jesus_m15": { homeScore: 1, awayScore: 3 },
   "anabell_m15": { homeScore: 0, awayScore: 1 },
   "luis_m15": { homeScore: 0, awayScore: 2 },
@@ -264,7 +266,7 @@ const INITIAL_PREDICTIONS = {
 
   // Partido 16: Irán vs Nueva Zelanda
   "angel_m16": { homeScore: 0, awayScore: 2 },
-  "jairo_m16": { homeScore: 1, awayScore: 2 },
+
   "jesus_m16": { homeScore: 1, awayScore: 1 },
   "anabell_m16": { homeScore: 0, awayScore: 1 },
   "luis_m16": { homeScore: 0, awayScore: 1 },
@@ -274,7 +276,7 @@ const INITIAL_PREDICTIONS = {
 
   // Partido 17: Francia vs Senegal
   "angel_m17": { homeScore: 3, awayScore: 0 },
-  "jairo_m17": { homeScore: 3, awayScore: 1 },
+
   "jesus_m17": { homeScore: 3, awayScore: 0 },
   "anabell_m17": { homeScore: 2, awayScore: 0 },
   "luis_m17": { homeScore: 2, awayScore: 1 },
@@ -284,7 +286,7 @@ const INITIAL_PREDICTIONS = {
 
   // Partido 18: Irak vs Noruega
   "angel_m18": { homeScore: 1, awayScore: 2 },
-  "jairo_m18": { homeScore: 0, awayScore: 2 },
+
   "jesus_m18": { homeScore: 1, awayScore: 2 },
   "anabell_m18": { homeScore: 0, awayScore: 0 },
   "luis_m18": { homeScore: 1, awayScore: 2 },
@@ -294,7 +296,7 @@ const INITIAL_PREDICTIONS = {
 
   // Partido 19: Argentina vs Argelia
   "angel_m19": { homeScore: 3, awayScore: 0 },
-  "jairo_m19": { homeScore: 2, awayScore: 1 },
+
   "jesus_m19": { homeScore: 2, awayScore: 0 },
   "anabell_m19": { homeScore: 3, awayScore: 1 },
   "luis_m19": { homeScore: 2, awayScore: 0 },
@@ -304,7 +306,7 @@ const INITIAL_PREDICTIONS = {
 
   // Partido 20: Austria vs Jordania
   "angel_m20": { homeScore: 1, awayScore: 1 },
-  "jairo_m20": { homeScore: 1, awayScore: 0 },
+
   "jesus_m20": { homeScore: 1, awayScore: 0 },
   "anabell_m20": { homeScore: 1, awayScore: 0 },
   "luis_m20": { homeScore: 1, awayScore: 1 },
@@ -314,7 +316,7 @@ const INITIAL_PREDICTIONS = {
 
   // Partido 21: Portugal vs RD Congo
   "angel_m21": { homeScore: 3, awayScore: 0 },
-  "jairo_m21": { homeScore: 3, awayScore: 0 },
+
   "jesus_m21": { homeScore: 2, awayScore: 0 },
   "anabell_m21": { homeScore: 2, awayScore: 0 },
   "luis_m21": { homeScore: 2, awayScore: 0 },
@@ -324,7 +326,7 @@ const INITIAL_PREDICTIONS = {
 
   // Partido 22: Inglaterra vs Croacia
   "angel_m22": { homeScore: 3, awayScore: 2 },
-  "jairo_m22": { homeScore: 3, awayScore: 2 },
+
   "jesus_m22": { homeScore: 2, awayScore: 1 },
   "anabell_m22": { homeScore: 2, awayScore: 0 },
   "luis_m22": { homeScore: 2, awayScore: 2 },

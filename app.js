@@ -229,7 +229,7 @@ async function claimLegacyByName(displayName, uid) {
     const data = doc.data();
     const legacyName = normalizeName(data.name || "");
     const alreadyClaimed = data.claimed === true;
-    if (legacyName === targetName && !alreadyClaimed) {
+    if ((legacyName === targetName || legacyName.startsWith(targetName)) && !alreadyClaimed) {
       matchedLegacyUser = { id: doc.id, ...data };
       matchedLegacyRef = doc.ref;
     }
@@ -348,8 +348,105 @@ function bindAuth() {
     state.isAdmin = state.currentUser.role === "admin";
     localStorage.setItem(SESSION_KEY, JSON.stringify(state.currentUser));
     renderApp();
+    // After rendering, ensure legacy predictions are claimed if missing
+    tryClaimLegacyForCurrentUser();
   });
 }
+
+// Auto-claim legacy predictions for logged-in user if they have none
+async function tryClaimLegacyForCurrentUser() {
+  if (!state.currentUser) return;
+  const uid = state.currentUser.uid;
+  const name = state.currentUser.name || '';
+  const email = state.currentUser.email || '';
+  // Check if user already has predictions
+  const predsSnap = await db.collection(COLLECTIONS.predictions).where('uid', '==', uid).limit(1).get();
+  if (!predsSnap.empty) return; // already has predictions
+
+  // Build possible name candidates: full name, first name, email prefix
+  const candidates = [];
+  if (name) candidates.push(name);
+  const firstName = name.split(' ')[0];
+  if (firstName && firstName !== name) candidates.push(firstName);
+  if (email) {
+    const emailPrefix = email.split('@')[0];
+    if (emailPrefix) candidates.push(emailPrefix);
+  }
+
+  let claimed = false;
+  for (const candidate of candidates) {
+    const result = await claimLegacyByName(candidate, uid);
+    if (result) {
+      claimed = true;
+      renderApp();
+      break;
+    }
+  }
+
+  // If not claimed by name, attempt by legacy id (e.g., uid or email prefix)
+  if (!claimed) {
+    const idCandidates = [];
+    if (uid) idCandidates.push(uid);
+    if (email) {
+      const emailPrefix = email.split('@')[0];
+      if (emailPrefix) idCandidates.push(emailPrefix);
+    }
+    for (const idCand of idCandidates) {
+      const result = await claimLegacyById(idCand, uid);
+      if (result) {
+        renderApp();
+        break;
+      }
+    }
+  }
+}
+
+// Claim legacy predictions by legacy document id (instead of name)
+async function claimLegacyById(legacyId, uid) {
+  if (!legacyId) return null;
+  const legacyRef = db.collection(COLLECTIONS.legacyUsers).doc(legacyId);
+  const legacyDoc = await legacyRef.get();
+  if (!legacyDoc.exists) return null;
+  const legacyData = legacyDoc.data();
+  if (legacyData.claimed) return null;
+
+  // Mark as claimed
+  await db.runTransaction(async (tx) => {
+    tx.set(legacyRef, {
+      claimed: true,
+      status: "claimed",
+      claimedBy: uid,
+      claimedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+  });
+
+  // Migrate predictions for this legacy user
+  const legacyPredsSnap = await db.collection(COLLECTIONS.predictions)
+    .where("legacyUserId", "==", legacyId)
+    .get();
+  if (legacyPredsSnap.empty) return legacyData;
+
+  const batch = db.batch();
+  legacyPredsSnap.forEach(doc => {
+    const data = doc.data();
+    const matchId = data.matchId;
+    if (!matchId) return;
+    const ref = db.collection(COLLECTIONS.predictions).doc(`${uid}_${matchId}`);
+    batch.set(ref, {
+      uid,
+      matchId,
+      homeScore: data.homeScore,
+      awayScore: data.awayScore,
+      migratedFromLegacy: legacyId,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+  });
+  await batch.commit();
+  return legacyData;
+}
+
+
+
 
 function setupNavigation() {
   window.switchTab = (tabId) => {
@@ -546,7 +643,7 @@ function renderPredictions() {
     const hasPrediction = prediction.homeScore !== "" && prediction.awayScore !== "";
     const isLive = match.status === "IN_PLAY";
     const matchDateUTC = parseMatchDateAsUTC(match.date);
-    const isLockedByTime = matchDateUTC.getTime() - Date.now() < 60 * 60 * 1000;
+    const isLockedByTime = matchDateUTC.getTime() - Date.now() < 5 * 60 * 1000;
     const disabledAttr = (match.completed || isLive || hasPrediction || isLockedByTime || isMatchUndetermined(match)) ? "disabled" : "";
 
     const matchPoints = calculateMatchPoints(match, prediction);
