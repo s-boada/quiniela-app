@@ -1384,6 +1384,176 @@ select.input-select:focus {
   }
 }
 
+/* Bracket de eliminatorias */
+.eliminations-page {
+  margin-top: 24px;
+}
+
+.eliminations-header h2 {
+  margin: 0 0 14px;
+  font-size: 1.4rem;
+}
+
+.bracket-scroll {
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.bracket-board {
+  min-width: 2000px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 26px;
+  align-items: start;
+}
+
+.bracket-side {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(180px, 220px));
+  gap: 14px;
+}
+
+.bracket-side-right {
+  justify-content: end;
+}
+
+.knockout-column h3 {
+  font-size: 0.78rem;
+  margin: 0 0 10px;
+  color: var(--text-secondary);
+}
+
+.knockout-column-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.knockout-r32 .knockout-column-body { gap: 10px; }
+.knockout-r16 .knockout-column-body { padding-top: 28px; gap: 52px; }
+.knockout-qf .knockout-column-body { padding-top: 70px; gap: 150px; }
+.knockout-sf .knockout-column-body { padding-top: 172px; gap: 0; }
+
+.knockout-match {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-card);
+  padding: 8px;
+}
+
+.knockout-match-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.knockout-date {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+.knockout-id {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.knockout-team-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 6px;
+  padding: 4px 6px;
+}
+
+.knockout-team-row + .knockout-team-row {
+  margin-top: 4px;
+}
+
+.knockout-team-identity {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.knockout-team-name {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.knockout-flag {
+  width: 18px;
+  height: 12px;
+  object-fit: cover;
+  border-radius: 2px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  flex-shrink: 0;
+}
+
+.knockout-team-score {
+  min-width: 14px;
+  text-align: right;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.bracket-center {
+  width: 260px;
+  padding-top: 190px;
+}
+
+.center-column h3 {
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.third-place-column {
+  margin-top: 58px;
+}
+
+@media (max-width: 768px) {
+  .bracket-board {
+    min-width: 1680px;
+  }
+
+  .bracket-side {
+    grid-template-columns: repeat(4, minmax(160px, 190px));
+  }
+
+  .bracket-center {
+    width: 220px;
+    padding-top: 190px;
+  }
+}
+
+@media (max-width: 580px) {
+  .bracket-board {
+    min-width: 1480px;
+  }
+
+  .knockout-date,
+  .knockout-id {
+    font-size: 0.62rem;
+  }
+
+  .knockout-team-name {
+    font-size: 0.66rem;
+  }
+
+  .knockout-team-score {
+    font-size: 0.68rem;
+  }
+}
+
 /* Premios Premium card styles hover effects */
 .prize-card:hover {
   transform: translateY(-5px);

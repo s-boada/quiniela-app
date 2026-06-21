@@ -20,6 +20,15 @@ let matches = [];
 let users = [];
 let currentUser = null;
 let pollingTimer = null;
+let teamEdits = {};
+const EDITABLE_KNOCKOUT_STAGES = new Set([
+  "Dieciseisavos de Final",
+  "Octavos de Final",
+  "Cuartos de Final",
+  "Semifinales",
+  "Final",
+  "Tercer Puesto"
+]);
 
 function getCountryFlag(countryName) {
   if (!countryName) return "";
@@ -102,19 +111,23 @@ function renderMatchesSection() {
     const away = m.realAwayScore != null ? m.realAwayScore : "";
     const isCompleted = !!m.completed;
     const disabledAttr = isCompleted ? "disabled" : "";
+    const canEditTeams = !isCompleted && EDITABLE_KNOCKOUT_STAGES.has(m.stage);
     html += `
       <div class="match-card ${isCompleted ? "is-completed" : ""}">
         <div class="match-header">
-          <span class="match-stage">${m.stage || ""}</span>
+          <span class="match-stage">
+            ${m.stage || ""}
+            ${EDITABLE_KNOCKOUT_STAGES.has(m.stage) ? `<span style="margin-left: 6px; font-weight: 700; color: var(--accent-soccer);">${getMatchNumberLabel(m)}</span>` : ""}
+          </span>
           <span>${m.date || ""}</span>
         </div>
         <div class="match-teams-score">
           <div class="team-row">
-            <div class="team-info">${getCountryFlag(m.homeTeam)}<span>${m.homeTeam}</span></div>
+            ${renderAdminTeamEditor(m, "home", canEditTeams)}
             <input type="number" class="score-input" id="h_${m.id}" value="${home}" min="0" ${disabledAttr}>
           </div>
           <div class="team-row">
-            <div class="team-info">${getCountryFlag(m.awayTeam)}<span>${m.awayTeam}</span></div>
+            ${renderAdminTeamEditor(m, "away", canEditTeams)}
             <input type="number" class="score-input" id="a_${m.id}" value="${away}" min="0" ${disabledAttr}>
           </div>
         </div>
@@ -128,6 +141,80 @@ function renderMatchesSection() {
   });
   html += "</div>";
   return html;
+}
+
+function renderAdminTeamEditor(match, side, canEditTeams) {
+  const currentName = side === "home" ? (match.homeTeam || "") : (match.awayTeam || "");
+  const key = `${match.id}_${side}`;
+  const editState = teamEdits[key];
+  if (editState) {
+    return `
+      <div class="team-info" style="flex-wrap: wrap; gap: 8px;">
+        ${getCountryFlag(currentName)}
+        <input
+          type="text"
+          id="team_edit_${key}"
+          value="${escapeHtml(editState.teamName)}"
+          style="min-width: 140px; padding: 6px 8px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-primary); color: var(--text-primary);"
+        >
+        <button
+          type="button"
+          class="btn"
+          style="padding: 6px 10px; border-radius: 8px; background: var(--accent-soccer); color: #fff; border: none; cursor: pointer;"
+          onclick="saveEditedTeam('${match.id}', '${side}')"
+        >
+          Guardar
+        </button>
+        <button
+          type="button"
+          class="btn"
+          style="padding: 6px 10px; border-radius: 8px; background: transparent; color: var(--text-secondary); border: 1px solid var(--border-color); cursor: pointer;"
+          onclick="cancelEditTeam('${match.id}', '${side}')"
+        >
+          Cancelar
+        </button>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="team-info" style="flex-wrap: wrap; gap: 8px;">
+      ${getCountryFlag(currentName)}
+      <span>${currentName || "-"}</span>
+      ${canEditTeams ? `
+        <button
+          type="button"
+          class="btn"
+          style="padding: 4px 9px; border-radius: 8px; background: transparent; color: var(--accent-soccer); border: 1px solid rgba(2, 86, 214, 0.35); cursor: pointer; font-size: 0.78rem;"
+          onclick="startEditTeam('${match.id}', '${side}')"
+        >
+          Editar
+        </button>
+      ` : ""}
+    </div>
+  `;
+}
+
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function extractMatchApiId(match) {
+  if (!match) return null;
+  if (typeof match.apiId === "number" && Number.isFinite(match.apiId)) return match.apiId;
+  const numericPart = Number(String(match.id || "").replace(/\D/g, ""));
+  return Number.isFinite(numericPart) && numericPart > 0 ? numericPart : null;
+}
+
+function getMatchNumberLabel(match) {
+  const apiId = extractMatchApiId(match);
+  if (apiId != null) return `P${apiId}`;
+  return match?.id || "-";
 }
 
 function renderUsersSection() {
@@ -232,6 +319,49 @@ window.saveMatchScore = async (matchId) => {
     await loadAdminData();
   } catch (error) {
     alert(`No se pudo guardar: ${error.message}`);
+  }
+};
+
+window.startEditTeam = (matchId, side) => {
+  const match = matches.find((m) => m.id === matchId);
+  if (!match) return;
+  if (match.completed) {
+    alert("No puedes editar países en partidos finalizados.");
+    return;
+  }
+  if (!EDITABLE_KNOCKOUT_STAGES.has(match.stage)) {
+    alert("Solo puedes editar países desde Dieciseisavos en adelante.");
+    return;
+  }
+  const currentName = side === "home" ? (match.homeTeam || "") : (match.awayTeam || "");
+  teamEdits[`${matchId}_${side}`] = { teamName: currentName };
+  renderAdminPanel();
+};
+
+window.cancelEditTeam = (matchId, side) => {
+  delete teamEdits[`${matchId}_${side}`];
+  renderAdminPanel();
+};
+
+window.saveEditedTeam = async (matchId, side) => {
+  if (!currentUser || currentUser.role !== "admin") {
+    alert("No autorizado.");
+    return;
+  }
+  const key = `${matchId}_${side}`;
+  const input = document.getElementById(`team_edit_${key}`);
+  if (!input) return;
+  const teamName = input.value.trim();
+  if (!teamName) {
+    alert("El nombre del país no puede estar vacío.");
+    return;
+  }
+  try {
+    await api.updateMatchTeam(matchId, { side, teamName });
+    delete teamEdits[key];
+    await loadAdminData();
+  } catch (error) {
+    alert(`No se pudo actualizar el país: ${error.message}`);
   }
 };
 

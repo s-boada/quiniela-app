@@ -1,7 +1,7 @@
 // Cliente HTTP para quiniela-back
 (function () {
   const TOKEN_KEY = "quiniela_token";
-  const API_BASE_URL = window.QUINIELA_API_URL || "https://quiniela-priv-api.sboada.com/api";
+  const API_BASE_URL = window.QUINIELA_API_URL || "http://localhost:3000/api";
 
   function getToken() {
     return localStorage.getItem(TOKEN_KEY);
@@ -66,6 +66,12 @@
       return apiFetch(`/matches/${matchId}`, {
         method: "PUT",
         body: JSON.stringify({ realHomeScore, realAwayScore })
+      });
+    },
+    updateMatchTeam(matchId, payload) {
+      return apiFetch(`/matches/${matchId}/team`, {
+        method: "PUT",
+        body: JSON.stringify(payload)
       });
     },
     addMatch(payload) {

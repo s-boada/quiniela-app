@@ -20,6 +20,18 @@ let state = {
 let pollingTimer = null;
 
 const PREDICTION_LOCK_MS = 5 * 60 * 1000;
+const BRACKET_ROUNDS_LEFT = [
+  { key: "left-r32", title: "Dieciseisavos de final", columnClass: "knockout-r32", apiIds: [74, 77, 73, 75, 83, 84, 81, 82] },
+  { key: "left-r16", title: "Octavos de final", columnClass: "knockout-r16", apiIds: [89, 90, 93, 94] },
+  { key: "left-qf", title: "Cuartos de final", columnClass: "knockout-qf", apiIds: [97, 98] },
+  { key: "left-sf", title: "Semifinal", columnClass: "knockout-sf", apiIds: [101] }
+];
+const BRACKET_ROUNDS_RIGHT = [
+  { key: "right-sf", title: "Semifinal", columnClass: "knockout-sf", apiIds: [102] },
+  { key: "right-qf", title: "Cuartos de final", columnClass: "knockout-qf", apiIds: [99, 100] },
+  { key: "right-r16", title: "Octavos de final", columnClass: "knockout-r16", apiIds: [91, 92, 95, 96] },
+  { key: "right-r32", title: "Dieciseisavos de final", columnClass: "knockout-r32", apiIds: [76, 78, 79, 80, 86, 88, 85, 87] }
+];
 
 const COUNTRY_CODES = {
   "Argelia": "dz",
@@ -287,6 +299,10 @@ function renderApp() {
     if (!state.currentUser) return switchTab("leaderboard");
     renderGroupStageTab();
   }
+  if (state.activeTab === "eliminations") {
+    if (!state.currentUser) return switchTab("leaderboard");
+    renderKnockoutBracket();
+  }
 }
 
 function updateUserBadge() {
@@ -294,6 +310,7 @@ function updateUserBadge() {
   const loggedInControls = document.getElementById("loggedInControls");
   const nameEl = document.getElementById("currentUserName");
   const groupStageLink = document.getElementById("groupStageTabLink");
+  const eliminationsLink = document.getElementById("eliminationsTabLink");
   const premiosLink = document.getElementById("premiosTabLink");
   const adminLink = document.getElementById("adminTabLink");
 
@@ -302,12 +319,14 @@ function updateUserBadge() {
     if (loggedInControls) loggedInControls.style.display = "flex";
     if (nameEl) nameEl.textContent = (state.currentUser.name || "Usuario").split(" ")[0];
     if (groupStageLink) groupStageLink.style.display = "inline-block";
+    if (eliminationsLink) eliminationsLink.style.display = "inline-block";
     if (premiosLink) premiosLink.style.display = "inline-block";
     if (adminLink) adminLink.style.display = state.isAdmin ? "inline-block" : "none";
   } else {
     if (loggedOutControls) loggedOutControls.style.display = "flex";
     if (loggedInControls) loggedInControls.style.display = "none";
     if (groupStageLink) groupStageLink.style.display = "none";
+    if (eliminationsLink) eliminationsLink.style.display = "none";
     if (premiosLink) premiosLink.style.display = "inline-block";
     if (adminLink) adminLink.style.display = "none";
   }
@@ -405,7 +424,15 @@ function renderPredictions() {
     const card = document.createElement("div");
     card.className = `match-card ${match.completed ? "is-completed" : ""} ${isLive ? "is-live" : ""} ${hasPrediction ? "has-prediction" : ""}`;
     card.innerHTML = `
-      <div class="match-header"><span class="match-stage">${match.stage}</span><span>${formatMatchDateToCaracas12h(match.date)}</span></div>
+      <div class="match-header">
+        <span class="match-stage">
+          ${match.stage}
+          <span style="margin-left: 6px; font-weight: 700; color: var(--accent-soccer);">
+            ${getMatchNumberLabel(match)}
+          </span>
+        </span>
+        <span>${formatMatchDateToCaracas12h(match.date)}</span>
+      </div>
       <div class="match-teams-score">
         <div class="team-row"><div class="team-info">${getCountryFlag(match.homeTeam)}<span class="team-name">${match.homeTeam}</span></div><input type="number" class="score-input" id="home_${match.id}" value="${prediction.homeScore}" ${disabledAttr}></div>
         <div class="team-row"><div class="team-info">${getCountryFlag(match.awayTeam)}<span class="team-name">${match.awayTeam}</span></div><input type="number" class="score-input" id="away_${match.id}" value="${prediction.awayScore}" ${disabledAttr}></div>
@@ -467,7 +494,7 @@ window.logoutUser = async () => {
   state.matches = [];
   state.predictions = {};
   localStorage.removeItem(SESSION_KEY);
-  if (state.activeTab === "predictions" || state.activeTab === "groupStage") {
+  if (state.activeTab === "predictions" || state.activeTab === "groupStage" || state.activeTab === "eliminations") {
     switchTab("leaderboard");
   } else {
     renderApp();
@@ -583,7 +610,120 @@ window.renderGroupStageTab = () => {
       list.appendChild(row);
     });
   }
+
 };
+
+function renderKnockoutBracket() {
+  const bracketBoard = document.getElementById("eliminationsBracketBoard");
+  if (!bracketBoard) return;
+
+  const matchesByApiId = new Map();
+  state.matches.forEach((match) => {
+    const apiId = extractMatchApiId(match);
+    if (apiId != null) matchesByApiId.set(apiId, match);
+  });
+
+  const renderRoundColumn = (round) => {
+    const matchesHtml = round.apiIds
+      .map((apiId) => renderBracketMatch(matchesByApiId.get(apiId), apiId))
+      .filter(Boolean)
+      .join("");
+    return `
+      <article class="knockout-column ${round.columnClass}">
+        <h3>${round.title}</h3>
+        <div class="knockout-column-body">${matchesHtml}</div>
+      </article>
+    `;
+  };
+
+  const leftHtml = BRACKET_ROUNDS_LEFT.map(renderRoundColumn).join("");
+  const rightHtml = BRACKET_ROUNDS_RIGHT.map(renderRoundColumn).join("");
+  const finalMatchHtml = renderBracketMatch(matchesByApiId.get(104), 104);
+  const thirdPlaceHtml = renderBracketMatch(matchesByApiId.get(103), 103);
+
+  bracketBoard.innerHTML = `
+    <div class="bracket-side bracket-side-left">${leftHtml}</div>
+    <div class="bracket-center">
+      ${finalMatchHtml ? `<article class="knockout-column center-column final-column"><h3>Final</h3><div class="knockout-column-body">${finalMatchHtml}</div></article>` : ""}
+      ${thirdPlaceHtml ? `<article class="knockout-column center-column third-place-column"><h3>Partido por el tercer puesto</h3><div class="knockout-column-body">${thirdPlaceHtml}</div></article>` : ""}
+    </div>
+    <div class="bracket-side bracket-side-right">${rightHtml}</div>
+  `;
+}
+
+function renderBracketMatch(match, apiId) {
+  if (!match) return "";
+  const homeFlag = getCountryFlagImgSrc(match.homeTeam);
+  const awayFlag = getCountryFlagImgSrc(match.awayTeam);
+  return `
+    <article class="knockout-match">
+      <div class="knockout-match-top">
+        <span class="knockout-date">${formatBracketDate(match.date)}</span>
+        <span class="knockout-id">P${apiId}</span>
+      </div>
+      <div class="knockout-team-row">
+        <div class="knockout-team-identity">
+          <span class="knockout-team-name">${match.homeTeam || "-"}</span>
+          ${homeFlag ? `<img src="${homeFlag}" alt="Bandera de ${match.homeTeam}" class="knockout-flag" />` : ""}
+        </div>
+        <span class="knockout-team-score">${getBracketDisplayScore(match, "home")}</span>
+      </div>
+      <div class="knockout-team-row">
+        <div class="knockout-team-identity">
+          <span class="knockout-team-name">${match.awayTeam || "-"}</span>
+          ${awayFlag ? `<img src="${awayFlag}" alt="Bandera de ${match.awayTeam}" class="knockout-flag" />` : ""}
+        </div>
+        <span class="knockout-team-score">${getBracketDisplayScore(match, "away")}</span>
+      </div>
+    </article>
+  `;
+}
+
+function getBracketDisplayScore(match, side) {
+  if (!match) return "";
+  if (match.completed) return String(side === "home" ? (match.realHomeScore ?? "-") : (match.realAwayScore ?? "-"));
+  if (match.status === "IN_PLAY") return String(side === "home" ? (match.liveHomeScore ?? 0) : (match.liveAwayScore ?? 0));
+  return "";
+}
+
+function extractMatchApiId(match) {
+  if (!match) return null;
+  if (typeof match.apiId === "number" && Number.isFinite(match.apiId)) return match.apiId;
+  const numericPart = Number(String(match.id || "").replace(/\D/g, ""));
+  return Number.isFinite(numericPart) && numericPart > 0 ? numericPart : null;
+}
+
+function getMatchNumberLabel(match) {
+  const apiId = extractMatchApiId(match);
+  if (apiId != null) return `P${apiId}`;
+  return match?.id || "-";
+}
+
+function formatBracketDate(dateStr) {
+  if (!dateStr) return "";
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Caracas",
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true
+  }).formatToParts(parseMatchDateAsUTC(dateStr));
+
+  const day = parts.find((part) => part.type === "day")?.value || "";
+  const month = parts.find((part) => part.type === "month")?.value || "";
+  const hour = parts.find((part) => part.type === "hour")?.value || "";
+  const minute = parts.find((part) => part.type === "minute")?.value || "";
+  const dayPeriod = parts.find((part) => part.type === "dayPeriod")?.value || "";
+  return `${day} ${month}, ${hour}:${minute} ${dayPeriod}`;
+}
+
+function getCountryFlagImgSrc(countryName) {
+  if (!countryName) return "";
+  const code = COUNTRY_CODES[countryName];
+  if (!code) return "";
+  return `https://flagcdn.com/w40/${code}.png`;
+}
 
 window.syncLiveResults = async () => {
   const syncBtn = document.getElementById("syncBtnText");

@@ -69,6 +69,7 @@
       <button class="tab-link active" onclick="switchTab('leaderboard')">🏆 Ranking</button>
       <button class="tab-link" onclick="switchTab('predictions')">✍️ Mis Marcadores</button>
       <button class="tab-link" id="groupStageTabLink" onclick="switchTab('groupStage')" style="display: none;">📊 Grupos y Fixture</button>
+      <button class="tab-link" id="eliminationsTabLink" onclick="switchTab('eliminations')" style="display: none;">📊 Eliminatorias</button>
       <button class="tab-link" onclick="switchTab('rules')">📋 Reglas</button>
       <button class="tab-link" id="premiosTabLink" onclick="switchTab('premios')">🎁 Premios</button>
       <button class="tab-link" id="adminTabLink" onclick="window.location.href='admin.html'" style="display: none;">⚙️ Admin</button>
@@ -211,6 +212,20 @@
             <h3>Partidos del Grupo</h3>
           </div>
           <div class="group-matches-list" id="groupMatchesList" style="display: flex; flex-direction: column; gap: 12px;">
+            <!-- Dinámico en JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PESTAÑA: Eliminatorias -->
+    <section id="eliminations" class="tab-content">
+      <div class="eliminations-page">
+        <div class="eliminations-header">
+          <h2>Bracket de Eliminatorias</h2>
+        </div>
+        <div class="bracket-scroll">
+          <div class="bracket-board" id="eliminationsBracketBoard">
             <!-- Dinámico en JS -->
           </div>
         </div>
