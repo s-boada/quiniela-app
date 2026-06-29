@@ -56,10 +56,10 @@
     fetchData() {
       return apiFetch("/data");
     },
-    savePrediction(matchId, homeScore, awayScore) {
+    savePrediction(matchId, homeScore, awayScore, qualifiedTeam = null) {
       return apiFetch(`/predictions/${matchId}`, {
         method: "PUT",
-        body: JSON.stringify({ homeScore, awayScore })
+        body: JSON.stringify({ homeScore, awayScore, qualifiedTeam })
       });
     },
     updateMatchScore(matchId, realHomeScore, realAwayScore) {

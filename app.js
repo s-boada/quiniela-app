@@ -20,6 +20,15 @@ let state = {
 let pollingTimer = null;
 
 const PREDICTION_LOCK_MS = 5 * 60 * 1000;
+const KNOCKOUT_STAGES = new Set([
+  "Dieciseisavos de Final",
+  "Octavos de Final",
+  "Cuartos de Final",
+  "Semifinal",
+  "Semifinales",
+  "Final",
+  "Tercer Puesto"
+]);
 const BRACKET_ROUNDS_LEFT = [
   { key: "left-r32", title: "Dieciseisavos de final", columnClass: "knockout-r32", apiIds: [74, 77, 73, 75, 83, 84, 81, 82] },
   { key: "left-r16", title: "Octavos de final", columnClass: "knockout-r16", apiIds: [89, 90, 93, 94] },
@@ -198,6 +207,16 @@ function isMatchUndetermined(match) {
   if (!match || !match.homeTeam || !match.awayTeam) return true;
   const placeholders = ["Ganador", "Segundo", "Perdedor", "Grupo", "3ro", "3er", "Winner", "Runner-up", "3rd", "Loser"];
   return placeholders.some((p) => match.homeTeam.includes(p) || match.awayTeam.includes(p));
+}
+
+function isKnockoutMatch(match) {
+  return Boolean(match && KNOCKOUT_STAGES.has(match.stage));
+}
+
+function requiresQualifiedTeam(match, homeScore, awayScore) {
+  if (!isKnockoutMatch(match)) return false;
+  if (Number.isNaN(homeScore) || Number.isNaN(awayScore)) return false;
+  return homeScore === awayScore;
 }
 
 function setupNavigation() {
@@ -398,12 +417,33 @@ function renderPredictions() {
   }
 
   tabMatches.forEach((match) => {
-    const prediction = state.predictions[`${currentUserId}_${match.id}`] || { homeScore: "", awayScore: "" };
+    const prediction = state.predictions[`${currentUserId}_${match.id}`] || { homeScore: "", awayScore: "", qualifiedTeam: null };
     const hasPrediction = prediction.homeScore !== "" && prediction.awayScore !== "";
     const isLive = match.status === "IN_PLAY";
     const matchDateUTC = parseMatchDateAsUTC(match.date);
     const isLockedByTime = matchDateUTC.getTime() - Date.now() < PREDICTION_LOCK_MS;
     const disabledAttr = (match.completed || isLive || hasPrediction || isLockedByTime || isMatchUndetermined(match)) ? "disabled" : "";
+    const predictedHome = parseInt(prediction.homeScore, 10);
+    const predictedAway = parseInt(prediction.awayScore, 10);
+    const showQualifiedSelector = requiresQualifiedTeam(match, predictedHome, predictedAway);
+    const selectedQualifiedTeam = prediction.qualifiedTeam || "";
+    const qualifiedSelectorHtml = isKnockoutMatch(match)
+      ? `
+        <div id="qualified_selector_${match.id}" style="display:flex;flex-direction:column;gap:8px;margin-top:10px;padding:10px;border:1px solid var(--border-color);border-radius:8px;background:rgba(2,86,214,0.03);">
+          <small style="font-size:0.78rem;color:var(--text-secondary);font-weight:600;">En empate de eliminatoria debes indicar qué país clasifica:</small>
+          <div style="display:flex;flex-wrap:wrap;gap:12px;">
+            <label style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;color:var(--text-primary);">
+              <input type="radio" name="qualified_${match.id}" value="${match.homeTeam}" ${selectedQualifiedTeam === match.homeTeam ? "checked" : ""} ${disabledAttr}>
+              ${match.homeTeam}
+            </label>
+            <label style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;color:var(--text-primary);">
+              <input type="radio" name="qualified_${match.id}" value="${match.awayTeam}" ${selectedQualifiedTeam === match.awayTeam ? "checked" : ""} ${disabledAttr}>
+              ${match.awayTeam}
+            </label>
+          </div>
+          ${hasPrediction && selectedQualifiedTeam ? `<small style="font-size:0.78rem;color:var(--accent-soccer);">País clasificado: ${selectedQualifiedTeam}</small>` : ""}
+        </div>`
+      : "";
 
     const matchPoints = calculateMatchPoints(match, prediction);
     const pointsBadgeHtml = match.completed
@@ -434,14 +474,27 @@ function renderPredictions() {
         <span>${formatMatchDateToCaracas12h(match.date)}</span>
       </div>
       <div class="match-teams-score">
-        <div class="team-row"><div class="team-info">${getCountryFlag(match.homeTeam)}<span class="team-name">${match.homeTeam}</span></div><input type="number" class="score-input" id="home_${match.id}" value="${prediction.homeScore}" ${disabledAttr}></div>
-        <div class="team-row"><div class="team-info">${getCountryFlag(match.awayTeam)}<span class="team-name">${match.awayTeam}</span></div><input type="number" class="score-input" id="away_${match.id}" value="${prediction.awayScore}" ${disabledAttr}></div>
+        <div class="team-row"><div class="team-info">${getCountryFlag(match.homeTeam)}<span class="team-name">${match.homeTeam}</span></div><input type="number" class="score-input" id="home_${match.id}" value="${prediction.homeScore}" oninput="handlePredictionScoreInput('${match.id}')" ${disabledAttr}></div>
+        <div class="team-row"><div class="team-info">${getCountryFlag(match.awayTeam)}<span class="team-name">${match.awayTeam}</span></div><input type="number" class="score-input" id="away_${match.id}" value="${prediction.awayScore}" oninput="handlePredictionScoreInput('${match.id}')" ${disabledAttr}></div>
+        ${qualifiedSelectorHtml}
       </div>
       <div class="card-footer" style="display: flex; justify-content: space-between; align-items: flex-end; gap: 10px;">
         <div>${match.completed ? `<div class="real-score-display">Real: <span class="real-score-badge">${match.realHomeScore} - ${match.realAwayScore}</span></div>` : hasPrediction ? `<span class="prediction-status status-saved">✓ Guardado</span>` : `<button class="btn btn-primary" onclick="confirmAndSavePrediction('${match.id}')">Guardar Pronóstico</button>`}</div>
         <div>${pointsBadgeHtml}</div>
       </div>`;
     grid.appendChild(card);
+
+    if (isKnockoutMatch(match)) {
+      const homeInputEl = card.querySelector(`#home_${match.id}`);
+      const awayInputEl = card.querySelector(`#away_${match.id}`);
+      if (homeInputEl) {
+        homeInputEl.addEventListener("input", () => window.handlePredictionScoreInput(match.id));
+      }
+      if (awayInputEl) {
+        awayInputEl.addEventListener("input", () => window.handlePredictionScoreInput(match.id));
+      }
+      window.handlePredictionScoreInput(match.id);
+    }
   });
 }
 
@@ -538,12 +591,45 @@ window.confirmAndSavePrediction = async (matchId) => {
   const homeVal = document.getElementById(`home_${matchId}`).value.trim();
   const awayVal = document.getElementById(`away_${matchId}`).value.trim();
   if (homeVal === "" || awayVal === "") return alert("Ingresa ambos marcadores.");
+  const homeScore = parseInt(homeVal, 10);
+  const awayScore = parseInt(awayVal, 10);
+  if (Number.isNaN(homeScore) || Number.isNaN(awayScore)) return alert("Ingresa marcadores válidos.");
+  if (homeScore < 0 || awayScore < 0) return alert("Los marcadores no pueden ser negativos.");
+
+  let qualifiedTeam = null;
+  if (requiresQualifiedTeam(match, homeScore, awayScore)) {
+    const selectedQualifiedOption = document.querySelector(`input[name="qualified_${matchId}"]:checked`);
+    if (!selectedQualifiedOption) return alert("En empate de eliminatoria debes indicar cuál país clasifica.");
+    qualifiedTeam = selectedQualifiedOption.value;
+  } else if (isKnockoutMatch(match)) {
+    qualifiedTeam = homeScore > awayScore ? match.homeTeam : match.awayTeam;
+  }
+
   if (!confirm("¿Guardar este pronóstico? Luego no se podrá editar.")) return;
   try {
-    await api.savePrediction(matchId, parseInt(homeVal, 10), parseInt(awayVal, 10));
+    await api.savePrediction(matchId, homeScore, awayScore, qualifiedTeam);
     await loadData();
   } catch (error) {
     alert(`No se pudo guardar: ${error.message}`);
+  }
+};
+
+window.handlePredictionScoreInput = (matchId) => {
+  const match = state.matches.find((item) => item.id === matchId);
+  if (!match || !isKnockoutMatch(match)) return;
+  const selector = document.getElementById(`qualified_selector_${matchId}`);
+  const homeInput = document.getElementById(`home_${matchId}`);
+  const awayInput = document.getElementById(`away_${matchId}`);
+  if (!selector || !homeInput || !awayInput) return;
+
+  const homeScore = parseInt(homeInput.value, 10);
+  const awayScore = parseInt(awayInput.value, 10);
+  const shouldShow = requiresQualifiedTeam(match, homeScore, awayScore);
+  selector.style.display = shouldShow ? "flex" : "none";
+
+  if (!shouldShow) {
+    const selected = selector.querySelector(`input[name="qualified_${matchId}"]:checked`);
+    if (selected) selected.checked = false;
   }
 };
 
